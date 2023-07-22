@@ -12,7 +12,7 @@ data class DriveFile(
     val md5: String,
     val size: Int,
     val isSensitive: Boolean,
-    val blurHash: String,
+    val blurHash: String?,
     val properties: DriveFilePropreties,
     val url: String?,
     val thumbnailUrl: String?,

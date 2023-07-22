@@ -11,11 +11,11 @@ data class User(
 @Serializable
 data class UserLite(
     val id: String,
-    val name: String,
+    val name: String?,
     val username: String,
     val host: String?,
     val avatarUrl: String,
-    val avatarBlurhash: String,
+    val avatarBlurhash: String?,
     val isBot: Boolean,
     val isCat: Boolean,
     val instance: Instance,

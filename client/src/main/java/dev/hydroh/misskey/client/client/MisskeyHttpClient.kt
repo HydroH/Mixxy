@@ -20,12 +20,12 @@ internal class MisskeyHttpClient(
     private val host: String,
     private var accessToken: String? = null,
     httpClient: HttpClient? = null,
-    logging: Boolean = false,
+    logging: Boolean = true,
 ) {
-    private val client = httpClient ?: HttpClient()
+    private var client = httpClient ?: HttpClient()
 
     init {
-        client.config {
+        client = client.config {
             expectSuccess = true
             defaultRequest {
                 url {
@@ -38,13 +38,14 @@ internal class MisskeyHttpClient(
                     encodeDefaults = true
                     explicitNulls = false
                     ignoreUnknownKeys = true
+                    classDiscriminator = "#class"
                 })
             }
             install(HttpCache)
             if (logging) {
                 install(Logging) {
-                    logger = Logger.DEFAULT
-                    level = LogLevel.INFO
+                    logger = Logger.SIMPLE
+                    level = LogLevel.ALL
                 }
             }
         }

@@ -52,6 +52,7 @@ android {
 
 dependencies {
     implementation(project(mapOf("path" to ":client")))
+    implementation("io.ktor:ktor-client-android:2.3.2")
 
     implementation("androidx.core:core-ktx:1.10.1")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.1")
@@ -73,4 +74,6 @@ dependencies {
 
     implementation("io.github.raamcosta.compose-destinations:core:1.9.42-beta")
     ksp("io.github.raamcosta.compose-destinations:ksp:1.9.42-beta")
+
+    implementation("com.github.skydoves:landscapist-coil:2.2.3")
 }
