@@ -10,15 +10,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.ramcosta.composedestinations.DestinationsNavHost
-import dev.hydroh.mixxy.data.DataProvider
-import dev.hydroh.mixxy.ui.screen.notes.NavGraphs
+import dagger.hilt.android.AndroidEntryPoint
+import dev.hydroh.mixxy.ui.screen.NavGraphs
 import dev.hydroh.mixxy.ui.theme.MixxyTheme
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        DataProvider.init()
-
         setContent {
             MixxyTheme {
                 MixxyApp()

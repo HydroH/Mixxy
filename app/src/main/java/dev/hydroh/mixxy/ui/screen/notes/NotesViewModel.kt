@@ -1,72 +1,51 @@
 package dev.hydroh.mixxy.ui.screen.notes
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshots.SnapshotStateList
-import androidx.compose.runtime.toMutableStateList
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import dev.hydroh.misskey.client.entity.Note
-import dev.hydroh.misskey.client.entity.request.NotesReq
-import dev.hydroh.mixxy.data.DataProvider
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.cachedIn
+import dagger.hilt.android.lifecycle.HiltViewModel
+import dev.hydroh.mixxy.data.local.UserDataStore
+import dev.hydroh.mixxy.data.remote.MisskeyDataSource
+import dev.hydroh.mixxy.data.remote.NotesPagingSource
 import dev.hydroh.mixxy.ui.components.LoadingState
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import javax.inject.Inject
 
-class NotesViewModel : ViewModel() {
-    var uiState by mutableStateOf(NotesUIState())
-        private set
+@HiltViewModel
+class NotesViewModel @Inject constructor(
+    private val misskeyDataSource: MisskeyDataSource,
+    private val userDataStore: UserDataStore
+) : ViewModel() {
+    private val _uiState = MutableStateFlow(NotesUIState())
+    val uiState = _uiState.asStateFlow()
 
-    fun loadNotes(timeline: NotesTimeline) {
-        viewModelScope.launch(Dispatchers.IO) {
-            try {
-                when (timeline) {
-                    NotesTimeline.HOME -> {
-                        val notes =
-                            DataProvider.misskeyClient.notes.timeline(NotesReq.HomeTimeline())
-                        uiState = uiState.copy(homeNotes = notes.toMutableStateList())
-                    }
-
-                    NotesTimeline.LOCAL -> {
-                        val notes =
-                            DataProvider.misskeyClient.notes.localTimeline(NotesReq.Timeline())
-                        uiState = uiState.copy(localNotes = notes.toMutableStateList())
-                    }
-
-                    NotesTimeline.HYBRID -> {
-                        val notes =
-                            DataProvider.misskeyClient.notes.hybridTimeline(NotesReq.Timeline())
-                        uiState = uiState.copy(hybridNotes = notes.toMutableStateList())
-                    }
-
-                    NotesTimeline.GLOBAL -> {
-                        val notes =
-                            DataProvider.misskeyClient.notes.globalTimeline(NotesReq.Timeline())
-                        uiState = uiState.copy(globalNotes = notes.toMutableStateList())
-                    }
-                }
-                uiState = uiState.copy(
-                    loadingState = LoadingState.SUCCESS,
-                    errorMessage = null,
-                )
-            } catch (e: Exception) {
-                uiState = uiState.copy(
-                    loadingState = LoadingState.FAIL,
-                    errorMessage = e.message,
-                )
-            }
-        }
+    companion object {
+        val PAGE_SIZE = 20
     }
+
+    val homeTimeline = Pager(PagingConfig(pageSize = PAGE_SIZE)) {
+        NotesPagingSource(misskeyDataSource, NotesTimeline.HOME)
+    }.flow.cachedIn(viewModelScope)
+
+    val localTimeline = Pager(PagingConfig(pageSize = PAGE_SIZE)) {
+        NotesPagingSource(misskeyDataSource, NotesTimeline.LOCAL)
+    }.flow.cachedIn(viewModelScope)
+
+    val hybridTimeline = Pager(PagingConfig(pageSize = PAGE_SIZE)) {
+        NotesPagingSource(misskeyDataSource, NotesTimeline.HYBRID)
+    }.flow.cachedIn(viewModelScope)
+
+    val globalTimeline = Pager(PagingConfig(pageSize = PAGE_SIZE)) {
+        NotesPagingSource(misskeyDataSource, NotesTimeline.GLOBAL)
+    }.flow.cachedIn(viewModelScope)
 }
 
 data class NotesUIState(
-    var homeNotes: SnapshotStateList<Note> = mutableStateListOf(),
-    var localNotes: SnapshotStateList<Note> = mutableStateListOf(),
-    var hybridNotes: SnapshotStateList<Note> = mutableStateListOf(),
-    var globalNotes: SnapshotStateList<Note> = mutableStateListOf(),
-    val loadingState: LoadingState = LoadingState.LOADING,
+    val currentTimeline: NotesTimeline = NotesTimeline.GLOBAL,
+    val loadingState: LoadingState = LoadingState.INIT,
     val errorMessage: String? = null,
 )
 

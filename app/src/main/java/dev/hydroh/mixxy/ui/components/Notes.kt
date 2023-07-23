@@ -14,7 +14,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -22,6 +21,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.items
 import com.skydoves.landscapist.ImageOptions
 import com.skydoves.landscapist.coil.CoilImage
 import dev.hydroh.misskey.client.entity.Note
@@ -74,12 +75,12 @@ fun NoteItem(
 
 @Composable
 fun NoteItemList(
-    notes: SnapshotStateList<Note>,
+    notes: LazyPagingItems<Note>,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(modifier = modifier) {
-        notes.map {
-            item {
+        items(notes) {
+            it?.let {
                 NoteItem(
                     note = it,
                     modifier = Modifier
