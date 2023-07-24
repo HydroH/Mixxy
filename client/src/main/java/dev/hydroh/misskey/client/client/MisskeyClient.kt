@@ -1,13 +1,15 @@
 package dev.hydroh.misskey.client.client
 
 import dev.hydroh.misskey.client.api.Notes
-import io.ktor.client.*
-import io.ktor.http.*
+import io.ktor.client.HttpClient
+import io.ktor.http.URLBuilder
+import io.ktor.http.URLProtocol
+import io.ktor.http.appendPathSegments
 import java.util.UUID
 
 class MisskeyClient(
     val host: String,
-    val accessToken: String? = null,
+    accessToken: String? = null,
     httpClient: HttpClient? = null,
 ) {
     private val client = MisskeyHttpClient(host, accessToken, httpClient)
@@ -31,13 +33,14 @@ class MisskeyClient(
         this.authUrl = authUrl
     }
 
-    suspend fun auth(): Boolean {
+    suspend fun auth(): String? {
         try {
-            client.auth(sessionId!!)
+            val accessToken = client.auth(sessionId!!)
             isAuthed = true
+            return accessToken
         } catch (_: Exception) {
         }
-        return isAuthed
+        return null
     }
 
     val notes = Notes(client)

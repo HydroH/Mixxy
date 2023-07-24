@@ -8,7 +8,6 @@ import androidx.paging.cachedIn
 import androidx.paging.map
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.hydroh.misskey.client.entity.Note
-import dev.hydroh.mixxy.data.local.UserDataStore
 import dev.hydroh.mixxy.data.remote.MisskeyDataSource
 import dev.hydroh.mixxy.data.remote.NotesPagingSource
 import dev.hydroh.mixxy.ui.components.LoadingState
@@ -20,7 +19,6 @@ import javax.inject.Inject
 @HiltViewModel
 class NotesViewModel @Inject constructor(
     private val misskeyDataSource: MisskeyDataSource,
-    private val userDataStore: UserDataStore
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(NotesUIState())
     val uiState = _uiState.asStateFlow()

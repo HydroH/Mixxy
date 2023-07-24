@@ -37,9 +37,11 @@ class LoginViewModel @Inject constructor(
             it.copy(loadingState = LoadingState.LOADING)
         }
         viewModelScope.launch(Dispatchers.IO) {
-            if (misskeyDataSource.client!!.auth()) {
+            val accessToken = misskeyDataSource.client!!.auth()
+            if (accessToken != null) {
                 _uiState.update {
-                    userDataStore.updateAccessToken(misskeyDataSource.client!!.accessToken!!)
+                    userDataStore.updateHost(misskeyDataSource.client!!.host)
+                    userDataStore.updateAccessToken(accessToken)
                     it.copy(loadingState = LoadingState.SUCCESS)
                 }
             } else {

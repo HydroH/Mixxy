@@ -21,20 +21,19 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.ramcosta.composedestinations.navigation.popUpTo
 import com.ramcosta.composedestinations.result.NavResult
-import com.ramcosta.composedestinations.result.ResultBackNavigator
 import com.ramcosta.composedestinations.result.ResultRecipient
 import dev.hydroh.mixxy.ui.components.LoadingState
+import dev.hydroh.mixxy.ui.screen.destinations.LoginScreenDestination
+import dev.hydroh.mixxy.ui.screen.destinations.NotesScreenDestination
 import dev.hydroh.mixxy.ui.screen.destinations.RedirectScreenDestination
 
-@RootNavGraph(start = true)
 @Destination
 @Composable
 fun LoginScreen(
     navigator: DestinationsNavigator? = null,
-    resultNavigator: ResultBackNavigator<Boolean>? = null,
     resultRecipient: ResultRecipient<RedirectScreenDestination, Boolean>? = null,
     viewModel: LoginViewModel = hiltViewModel(),
 ) {
@@ -50,7 +49,11 @@ fun LoginScreen(
     }
     LaunchedEffect(uiState.loadingState) {
         if (uiState.loadingState == LoadingState.SUCCESS) {
-            resultNavigator?.navigateBack(result = true)
+            navigator?.navigate(NotesScreenDestination) {
+                popUpTo(LoginScreenDestination) {
+                    inclusive = true
+                }
+            }
         }
     }
 
