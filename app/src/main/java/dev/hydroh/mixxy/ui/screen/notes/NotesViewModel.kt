@@ -5,15 +5,14 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.cachedIn
-import androidx.paging.map
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.hydroh.misskey.client.entity.Note
 import dev.hydroh.mixxy.data.remote.MisskeyDataSource
 import dev.hydroh.mixxy.data.remote.NotesPagingSource
 import dev.hydroh.mixxy.ui.components.LoadingState
+import dev.hydroh.mixxy.util.cachedPager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.combine
 import javax.inject.Inject
 
 @HiltViewModel
@@ -31,43 +30,19 @@ class NotesViewModel @Inject constructor(
 
     val homeTimeline = Pager(PagingConfig(pageSize = PAGE_SIZE)) {
         NotesPagingSource(misskeyDataSource, NotesTimeline.HOME)
-    }.flow.cachedIn(viewModelScope)
-        .combine(localNotes) { paging, local ->
-            paging.map { pagingItem ->
-                local.find { it.id == pagingItem.id } ?: pagingItem
-            }
-        }
+    }.flow.cachedIn(viewModelScope).cachedPager { it.id }
 
     val localTimeline = Pager(PagingConfig(pageSize = PAGE_SIZE)) {
         NotesPagingSource(misskeyDataSource, NotesTimeline.LOCAL)
-    }.flow.cachedIn(viewModelScope)
-        .combine(localNotes) { paging, local ->
-            paging.map { pagingItem ->
-                local.find { it.id == pagingItem.id } ?: pagingItem
-            }
-        }
+    }.flow.cachedIn(viewModelScope).cachedPager { it.id }
 
     val hybridTimeline = Pager(PagingConfig(pageSize = PAGE_SIZE)) {
         NotesPagingSource(misskeyDataSource, NotesTimeline.HYBRID)
-    }.flow.cachedIn(viewModelScope)
-        .combine(localNotes) { paging, local ->
-            paging.map { pagingItem ->
-                local.find { it.id == pagingItem.id } ?: pagingItem
-            }
-        }
+    }.flow.cachedIn(viewModelScope).cachedPager { it.id }
 
     val globalTimeline = Pager(PagingConfig(pageSize = PAGE_SIZE)) {
         NotesPagingSource(misskeyDataSource, NotesTimeline.GLOBAL)
-    }.flow.cachedIn(viewModelScope)
-        .combine(localNotes) { paging, local ->
-            paging.map { pagingItem ->
-                local.find { it.id == pagingItem.id } ?: pagingItem
-            }
-        }
-
-    fun updateNote(note: Note) {
-        localNotes.value = localNotes.value.filterNot { it.id == note.id } + note
-    }
+    }.flow.cachedIn(viewModelScope).cachedPager { it.id }
 }
 
 data class NotesUIState(
