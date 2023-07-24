@@ -19,7 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -35,15 +35,15 @@ import dev.hydroh.mixxy.ui.screen.destinations.RedirectScreenDestination
 fun LoginScreen(
     navigator: DestinationsNavigator? = null,
     resultNavigator: ResultBackNavigator<Boolean>? = null,
-    resultRecipient: ResultRecipient<RedirectScreenDestination, Unit>? = null,
-    loginViewModel: LoginViewModel = viewModel(),
+    resultRecipient: ResultRecipient<RedirectScreenDestination, Boolean>? = null,
+    viewModel: LoginViewModel = hiltViewModel(),
 ) {
-    val uiState by loginViewModel.uiState.collectAsState()
+    val uiState by viewModel.uiState.collectAsState()
 
     resultRecipient?.onNavResult { result ->
         when (result) {
             is NavResult.Value -> {
-                loginViewModel.tryAuth()
+                viewModel.tryAuth()
             }
             else -> {}
         }
@@ -70,7 +70,7 @@ fun LoginScreen(
             // Username
             OutlinedTextField(
                 value = uiState.host,
-                onValueChange = { loginViewModel.updateHost(it) },
+                onValueChange = { viewModel.updateHost(it) },
                 enabled = uiState.loadingState != LoadingState.LOADING,
                 label = {
                     Text(
@@ -87,7 +87,7 @@ fun LoginScreen(
             )
             // Submit
             Button(
-                onClick = { navigator?.navigate(RedirectScreenDestination(loginViewModel.authUrl)) },
+                onClick = { navigator?.navigate(RedirectScreenDestination(viewModel.authUrl)) },
                 enabled = uiState.loadingState != LoadingState.LOADING,
                 modifier = Modifier
                     .fillMaxWidth()

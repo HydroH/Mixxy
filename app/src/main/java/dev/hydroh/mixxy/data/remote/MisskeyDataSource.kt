@@ -8,7 +8,9 @@ import javax.inject.Singleton
 class MisskeyDataSource @Inject constructor() {
     var client: MisskeyClient? = null
     fun newClient(host: String) {
-        client = MisskeyClient.Builder(host).build()
+        client = MisskeyClient.Builder(host)
+            .name("Mixxy")
+            .build()
     }
 
     fun newClient(host: String, accessToken: String) {

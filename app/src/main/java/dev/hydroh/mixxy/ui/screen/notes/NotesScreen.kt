@@ -7,7 +7,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -22,10 +22,10 @@ import dev.hydroh.mixxy.ui.screen.destinations.RedirectScreenDestination
 fun NotesScreen(
     navigator: DestinationsNavigator? = null,
     resultRecipient: ResultRecipient<RedirectScreenDestination, Boolean>? = null,
-    notesViewModel: NotesViewModel = viewModel(),
+    viewModel: NotesViewModel = hiltViewModel(),
 ) {
-    val uiState by notesViewModel.uiState.collectAsState()
-    val globalTimeline = notesViewModel.globalTimeline.collectAsLazyPagingItems()
+    val uiState by viewModel.uiState.collectAsState()
+    val globalTimeline = viewModel.globalTimeline.collectAsLazyPagingItems()
 
     resultRecipient?.onNavResult { result ->
         when (result) {

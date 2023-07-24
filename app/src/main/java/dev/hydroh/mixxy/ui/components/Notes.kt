@@ -79,7 +79,10 @@ fun NoteItemList(
     modifier: Modifier = Modifier
 ) {
     LazyColumn(modifier = modifier) {
-        items(notes) {
+        items(
+            items = notes,
+            key = { note -> note.id }
+        ) {
             it?.let {
                 NoteItem(
                     note = it,

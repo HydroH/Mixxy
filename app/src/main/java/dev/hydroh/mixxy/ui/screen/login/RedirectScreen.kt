@@ -5,6 +5,10 @@ import androidx.browser.customtabs.CustomTabsIntent
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.lifecycle.Lifecycle
@@ -16,16 +20,17 @@ import com.ramcosta.composedestinations.result.ResultBackNavigator
 @Composable
 fun RedirectScreen(
     url: String,
-    resultNavigator: ResultBackNavigator<Unit>? = null
+    resultNavigator: ResultBackNavigator<Boolean>? = null
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
     val ctx = LocalContext.current
+    var navBack by rememberSaveable { mutableStateOf(false) }
 
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
             when (event) {
                 Lifecycle.Event.ON_RESUME -> {
-                    resultNavigator?.navigateBack()
+                    navBack = true
                 }
                 else -> {}
             }
@@ -35,6 +40,10 @@ fun RedirectScreen(
         onDispose {
             lifecycleOwner.lifecycle.removeObserver(observer)
         }
+    }
+
+    LaunchedEffect(navBack) {
+        if (navBack) resultNavigator?.navigateBack(result = true)
     }
 
     LaunchedEffect(Unit) {
