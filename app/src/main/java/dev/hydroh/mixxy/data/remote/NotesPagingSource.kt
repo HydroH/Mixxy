@@ -11,33 +11,33 @@ class NotesPagingSource(
     private val timeline: NotesTimeline,
 ) : PagingSource<String, Note>() {
     override suspend fun load(params: LoadParams<String>): LoadResult<String, Note> {
-        val sinceId = params.key
+        val untilId = params.key
         try {
             val notes = when (timeline) {
                 NotesTimeline.HOME -> misskeyDataSource.client!!.notes.timeline(
                     NotesReq.HomeTimeline(
-                        sinceId = sinceId,
+                        untilId = untilId,
                         limit = params.loadSize
                     )
                 )
 
                 NotesTimeline.LOCAL -> misskeyDataSource.client!!.notes.localTimeline(
                     NotesReq.Timeline(
-                        sinceId = sinceId,
+                        untilId = untilId,
                         limit = params.loadSize
                     )
                 )
 
                 NotesTimeline.HYBRID -> misskeyDataSource.client!!.notes.hybridTimeline(
                     NotesReq.Timeline(
-                        sinceId = sinceId,
+                        untilId = untilId,
                         limit = params.loadSize
                     )
                 )
 
                 NotesTimeline.GLOBAL -> misskeyDataSource.client!!.notes.globalTimeline(
                     NotesReq.Timeline(
-                        sinceId = sinceId,
+                        untilId = untilId,
                         limit = params.loadSize
                     )
                 )

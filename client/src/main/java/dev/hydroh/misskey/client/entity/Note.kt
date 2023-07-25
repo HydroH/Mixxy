@@ -1,6 +1,5 @@
 package dev.hydroh.misskey.client.entity
 
-import io.ktor.util.*
 import kotlinx.datetime.Instant
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -27,7 +26,7 @@ data class Note(
     val replyId: String?,
     val renoteId: String?,
     val mentions: ArrayList<String>?,
-    val uri: String,
+    val uri: String?,
     val url: String?,
     val reply: Note?,
     val renote: Note?,

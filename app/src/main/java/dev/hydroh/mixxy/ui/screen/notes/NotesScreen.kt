@@ -18,7 +18,7 @@ fun NotesScreen(
     viewModel: NotesViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    val globalTimeline = viewModel.globalTimeline.collectAsLazyPagingItems()
+    val globalTimeline = viewModel.globalTimeline.pager.collectAsLazyPagingItems()
 
     NoteItemList(notes = globalTimeline, modifier = Modifier.fillMaxWidth())
 }

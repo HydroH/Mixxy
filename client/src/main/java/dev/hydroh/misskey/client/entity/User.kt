@@ -18,7 +18,7 @@ data class UserLite(
     val avatarBlurhash: String?,
     val isBot: Boolean,
     val isCat: Boolean,
-    val instance: Instance,
+    val instance: Instance?,
     val emojis: HashMap<String, String>,
     val onlineStatus: OnlineStatus,
     // val badgeRoles
