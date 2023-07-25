@@ -6,13 +6,13 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.cachedIn
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dev.hydroh.misskey.client.entity.Note
 import dev.hydroh.mixxy.data.remote.MisskeyDataSource
 import dev.hydroh.mixxy.data.remote.NotesPagingSource
 import dev.hydroh.mixxy.ui.components.LoadingState
 import dev.hydroh.mixxy.util.cachedPager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
 @HiltViewModel
@@ -25,8 +25,6 @@ class NotesViewModel @Inject constructor(
     companion object {
         const val PAGE_SIZE = 20
     }
-
-    private val localNotes = MutableStateFlow(listOf<Note>())
 
     val homeTimeline = Pager(PagingConfig(pageSize = PAGE_SIZE)) {
         NotesPagingSource(misskeyDataSource, NotesTimeline.HOME)
@@ -43,10 +41,28 @@ class NotesViewModel @Inject constructor(
     val globalTimeline = Pager(PagingConfig(pageSize = PAGE_SIZE)) {
         NotesPagingSource(misskeyDataSource, NotesTimeline.GLOBAL)
     }.flow.cachedIn(viewModelScope).cachedPager { it.id }
+
+    val tabs = listOf(
+        TabInfo(timeline = NotesTimeline.HOME, title = "Home"),
+        TabInfo(timeline = NotesTimeline.LOCAL, title = "Local"),
+        TabInfo(timeline = NotesTimeline.HYBRID, title = "Hybrid"),
+        TabInfo(timeline = NotesTimeline.GLOBAL, title = "Global"),
+    )
+
+    fun updateTabIndex(index: Int) {
+        _uiState.update {
+            it.copy(timelineIndex = index)
+        }
+    }
+
+    data class TabInfo(
+        val timeline: NotesTimeline,
+        val title: String,
+    )
 }
 
 data class NotesUIState(
-    val currentTimeline: NotesTimeline = NotesTimeline.GLOBAL,
+    val timelineIndex: Int = 0,
     val loadingState: LoadingState = LoadingState.INIT,
     val errorMessage: String? = null,
 )
