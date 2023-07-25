@@ -12,7 +12,6 @@ import dev.hydroh.mixxy.ui.components.LoadingState
 import dev.hydroh.mixxy.util.cachedPager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
 @HiltViewModel
@@ -49,12 +48,6 @@ class NotesViewModel @Inject constructor(
         TabInfo(timeline = NotesTimeline.GLOBAL, title = "Global"),
     )
 
-    fun updateTabIndex(index: Int) {
-        _uiState.update {
-            it.copy(timelineIndex = index)
-        }
-    }
-
     data class TabInfo(
         val timeline: NotesTimeline,
         val title: String,
@@ -62,7 +55,6 @@ class NotesViewModel @Inject constructor(
 }
 
 data class NotesUIState(
-    val timelineIndex: Int = 0,
     val loadingState: LoadingState = LoadingState.INIT,
     val errorMessage: String? = null,
 )
