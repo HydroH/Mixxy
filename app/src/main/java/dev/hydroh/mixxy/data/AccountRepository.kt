@@ -19,12 +19,12 @@ class AccountRepository @Inject constructor(
         accountInfoDao.deactivateAccounts()
         accountInfoDao.insertAccountInfo(
             AccountInfo(
-                username = auth.userLite.username,
+                username = auth.user.username,
                 active = true,
                 host = misskeyDataSource.client!!.host,
                 accessToken = auth.token,
-                name = auth.userLite.name,
-                avatarUrl = auth.userLite.avatarUrl,
+                name = auth.user.name,
+                avatarUrl = auth.user.avatarUrl,
             )
         )
         return true
