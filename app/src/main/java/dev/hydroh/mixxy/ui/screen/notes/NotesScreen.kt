@@ -31,11 +31,6 @@ fun NotesScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
-    val homeTimeline = viewModel.homeTimeline.pager.collectAsLazyPagingItems()
-    val localTimeline = viewModel.localTimeline.pager.collectAsLazyPagingItems()
-    val hybridTimeline = viewModel.hybridTimeline.pager.collectAsLazyPagingItems()
-    val globalTimeline = viewModel.globalTimeline.pager.collectAsLazyPagingItems()
-
     val pagerState = rememberPagerState()
     val coroutineScope = rememberCoroutineScope()
 
@@ -62,20 +57,18 @@ fun NotesScreen(
         HorizontalPager(
             pageCount = viewModel.tabs.count(),
             state = pagerState,
-            beyondBoundsPageCount = 1,
         )
         { page ->
-            // TODO: Disable preloading.
+            val timeline = when (viewModel.tabs[page].timeline) {
+                NotesTimeline.HOME -> viewModel.homeTimeline
+                NotesTimeline.LOCAL -> viewModel.localTimeline
+                NotesTimeline.HYBRID -> viewModel.hybridTimeline
+                NotesTimeline.GLOBAL -> viewModel.globalTimeline
+            }
             NoteItemList(
-                notes = when (viewModel.tabs[page].timeline) {
-                    NotesTimeline.HOME -> homeTimeline
-                    NotesTimeline.LOCAL -> localTimeline
-                    NotesTimeline.HYBRID -> hybridTimeline
-                    NotesTimeline.GLOBAL -> globalTimeline
-                },
+                notes = timeline.pager.collectAsLazyPagingItems(),
                 modifier = Modifier.fillMaxWidth()
             )
         }
     }
-
 }
