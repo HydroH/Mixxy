@@ -6,7 +6,7 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.cachedIn
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dev.hydroh.mixxy.data.remote.MisskeyDataSource
+import dev.hydroh.mixxy.data.NotesRepository
 import dev.hydroh.mixxy.data.remote.NotesPagingSource
 import dev.hydroh.mixxy.ui.components.LoadingState
 import dev.hydroh.mixxy.util.cachedPager
@@ -16,7 +16,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class NotesViewModel @Inject constructor(
-    private val misskeyDataSource: MisskeyDataSource,
+    private val notesRepository: NotesRepository,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(NotesUIState())
     val uiState = _uiState.asStateFlow()
@@ -25,21 +25,17 @@ class NotesViewModel @Inject constructor(
         const val PAGE_SIZE = 20
     }
 
-    val homeTimeline = Pager(PagingConfig(pageSize = PAGE_SIZE)) {
-        NotesPagingSource(misskeyDataSource, NotesTimeline.HOME)
-    }.flow.cachedIn(viewModelScope).cachedPager { it.id }
+    val homeTimeline = notesRepository.pagingFlow(NotesTimeline.HOME)
+        .cachedIn(viewModelScope).cachedPager { it.id }
 
-    val localTimeline = Pager(PagingConfig(pageSize = PAGE_SIZE)) {
-        NotesPagingSource(misskeyDataSource, NotesTimeline.LOCAL)
-    }.flow.cachedIn(viewModelScope).cachedPager { it.id }
+    val localTimeline = notesRepository.pagingFlow(NotesTimeline.HOME)
+        .cachedIn(viewModelScope).cachedPager { it.id }
 
-    val hybridTimeline = Pager(PagingConfig(pageSize = PAGE_SIZE)) {
-        NotesPagingSource(misskeyDataSource, NotesTimeline.HYBRID)
-    }.flow.cachedIn(viewModelScope).cachedPager { it.id }
+    val hybridTimeline = notesRepository.pagingFlow(NotesTimeline.HOME)
+        .cachedIn(viewModelScope).cachedPager { it.id }
 
-    val globalTimeline = Pager(PagingConfig(pageSize = PAGE_SIZE)) {
-        NotesPagingSource(misskeyDataSource, NotesTimeline.GLOBAL)
-    }.flow.cachedIn(viewModelScope).cachedPager { it.id }
+    val globalTimeline = notesRepository.pagingFlow(NotesTimeline.HOME)
+        .cachedIn(viewModelScope).cachedPager { it.id }
 
     val tabs = listOf(
         TabInfo(timeline = NotesTimeline.HOME, title = "Home"),
