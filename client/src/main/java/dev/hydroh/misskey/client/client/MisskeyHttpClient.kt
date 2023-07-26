@@ -57,7 +57,7 @@ internal class MisskeyHttpClient(
         }
     }
 
-    suspend inline fun auth(sessionId: String): String {
+    suspend inline fun auth(sessionId: String): Auth {
         val auth = client.post {
             url {
                 appendPathSegments("api", "miauth", sessionId, "check")
@@ -66,7 +66,7 @@ internal class MisskeyHttpClient(
             setBody(HashMap<Int, Int>())
         }.body<Auth>()
         accessToken = auth.token
-        return auth.token
+        return auth
     }
 
     suspend inline fun <reified T> request(path: String, body: Authable): T {

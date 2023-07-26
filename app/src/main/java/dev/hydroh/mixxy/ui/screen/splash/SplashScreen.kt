@@ -20,7 +20,7 @@ fun SplashScreen(
 ) {
     LaunchedEffect(Unit) {
         navigator?.navigate(
-            if (viewModel.hasClient()) NotesScreenDestination
+            if (viewModel.loadAccount()) NotesScreenDestination
             else LoginScreenDestination
         ) {
             popUpTo(SplashScreenDestination) {

@@ -1,6 +1,7 @@
 package dev.hydroh.misskey.client.client
 
 import dev.hydroh.misskey.client.api.Notes
+import dev.hydroh.misskey.client.entity.Auth
 import io.ktor.client.HttpClient
 import io.ktor.http.URLBuilder
 import io.ktor.http.URLProtocol
@@ -33,11 +34,11 @@ class MisskeyClient(
         this.authUrl = authUrl
     }
 
-    suspend fun auth(): String? {
+    suspend fun auth(): Auth? {
         try {
-            val accessToken = client.auth(sessionId!!)
+            val auth = client.auth(sessionId!!)
             isAuthed = true
-            return accessToken
+            return auth
         } catch (_: Exception) {
         }
         return null
