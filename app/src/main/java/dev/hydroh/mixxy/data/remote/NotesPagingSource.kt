@@ -11,6 +11,15 @@ class NotesPagingSource(
     private val timeline: NotesTimeline,
 ) : PagingSource<String, Note>() {
     override suspend fun load(params: LoadParams<String>): LoadResult<String, Note> {
+        // Disable prepending
+        if (params is LoadParams.Prepend) {
+            return LoadResult.Page(
+                data = listOf(),
+                prevKey = null,
+                nextKey = null,
+            )
+        }
+
         val untilId = params.key
         try {
             val notes = when (timeline) {

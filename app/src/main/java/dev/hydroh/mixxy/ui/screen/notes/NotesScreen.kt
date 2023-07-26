@@ -1,10 +1,15 @@
 package dev.hydroh.mixxy.ui.screen.notes
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.TabRowDefaults
@@ -13,8 +18,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -22,7 +29,7 @@ import dev.hydroh.mixxy.ui.components.NoteItemList
 import dev.hydroh.mixxy.util.pagerTabIndicatorOffset
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterialApi::class)
 @Destination
 @Composable
 fun NotesScreen(
@@ -65,10 +72,25 @@ fun NotesScreen(
                 NotesTimeline.HYBRID -> viewModel.hybridTimeline
                 NotesTimeline.GLOBAL -> viewModel.globalTimeline
             }
-            NoteItemList(
-                notes = timeline.pager.collectAsLazyPagingItems(),
-                modifier = Modifier.fillMaxWidth()
-            )
+            val pagingItems = timeline.pager.collectAsLazyPagingItems()
+            val pullRefreshState = rememberPullRefreshState(
+                refreshing = pagingItems.loadState.refresh is LoadState.Loading,
+                onRefresh = {
+                    pagingItems.refresh()
+                    timeline.invalidate()
+                })
+            Box(
+                modifier = Modifier.pullRefresh(pullRefreshState)
+            ) {
+                NoteItemList(
+                    notes = pagingItems,
+                    modifier = Modifier.fillMaxWidth()
+                )
+                PullRefreshIndicator(
+                    refreshing = pagingItems.loadState.refresh is LoadState.Loading,
+                    state = pullRefreshState,
+                    modifier = Modifier.align(Alignment.TopCenter))
+            }
         }
     }
 }
