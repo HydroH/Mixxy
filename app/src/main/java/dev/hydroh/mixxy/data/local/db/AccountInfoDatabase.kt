@@ -1,4 +1,4 @@
-package dev.hydroh.mixxy.data.local
+package dev.hydroh.mixxy.data.local.db
 
 import androidx.room.Database
 import androidx.room.RoomDatabase

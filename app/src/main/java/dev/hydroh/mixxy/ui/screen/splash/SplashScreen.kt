@@ -19,12 +19,18 @@ fun SplashScreen(
     viewModel: SplashViewModel = hiltViewModel()
 ) {
     LaunchedEffect(Unit) {
-        navigator?.navigate(
-            if (viewModel.loadAccount()) NotesScreenDestination
-            else LoginScreenDestination
-        ) {
-            popUpTo(SplashScreenDestination) {
-                inclusive = true
+        if (viewModel.loadAccount()) {
+            viewModel.loadEmojis()
+            navigator?.navigate(NotesScreenDestination) {
+                popUpTo(SplashScreenDestination) {
+                    inclusive = true
+                }
+            }
+        } else {
+            navigator?.navigate(LoginScreenDestination) {
+                popUpTo(SplashScreenDestination) {
+                    inclusive = true
+                }
             }
         }
     }

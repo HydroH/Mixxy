@@ -84,6 +84,8 @@ fun NotesScreen(
             ) {
                 NoteItemList(
                     notes = pagingItems,
+                    emojiMap = viewModel.getEmojiMap(),
+                    updateEmojis = viewModel::updateEmojis,
                     modifier = Modifier.fillMaxWidth()
                 )
                 PullRefreshIndicator(

@@ -4,7 +4,9 @@ import dev.hydroh.mixxy.data.local.dao.AccountInfoDao
 import dev.hydroh.mixxy.data.local.model.AccountInfo
 import dev.hydroh.mixxy.data.remote.MisskeyDataSource
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class AccountRepository @Inject constructor(
     private val misskeyDataSource: MisskeyDataSource,
     private val accountInfoDao: AccountInfoDao

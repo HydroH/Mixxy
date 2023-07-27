@@ -14,6 +14,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -26,10 +27,13 @@ import androidx.paging.compose.items
 import com.skydoves.landscapist.ImageOptions
 import com.skydoves.landscapist.coil.CoilImage
 import dev.hydroh.misskey.client.entity.Note
+import dev.hydroh.mixxy.data.local.model.EmojiData
 
 @Composable
 fun NoteItem(
     note: Note,
+    emojiMap: SnapshotStateMap<String, EmojiData>,
+    updateEmojis: (List<String>) -> Unit,
     modifier: Modifier = Modifier
 ) {
     ElevatedCard(
@@ -52,8 +56,10 @@ fun NoteItem(
             )
             Spacer(modifier = Modifier.width(8.dp))
             Column {
-                Text(
+                EmojiText(
                     text = note.user.name ?: note.user.username,
+                    emojiMap = emojiMap,
+                    updateEmojis = updateEmojis,
                     fontWeight = FontWeight.Bold,
                     fontSize = 16.sp
                 )
@@ -64,8 +70,10 @@ fun NoteItem(
                     fontSize = 14.sp
                 )
                 Spacer(modifier = Modifier.height(8.dp))
-                Text(
+                EmojiText(
                     text = note.text ?: "",
+                    emojiMap = emojiMap,
+                    updateEmojis = updateEmojis,
                     fontSize = 16.sp
                 )
             }
@@ -76,6 +84,8 @@ fun NoteItem(
 @Composable
 fun NoteItemList(
     notes: LazyPagingItems<Note>,
+    emojiMap: SnapshotStateMap<String, EmojiData>,
+    updateEmojis: (List<String>) -> Unit,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(modifier = modifier) {
@@ -86,6 +96,8 @@ fun NoteItemList(
             it?.let {
                 NoteItem(
                     note = it,
+                    emojiMap = emojiMap,
+                    updateEmojis = updateEmojis,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 8.dp, vertical = 3.dp)

@@ -2,21 +2,22 @@ package dev.hydroh.mixxy.ui.screen.notes
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.paging.Pager
-import androidx.paging.PagingConfig
 import androidx.paging.cachedIn
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dev.hydroh.mixxy.data.InstanceRepository
 import dev.hydroh.mixxy.data.NotesRepository
-import dev.hydroh.mixxy.data.remote.NotesPagingSource
 import dev.hydroh.mixxy.ui.components.LoadingState
 import dev.hydroh.mixxy.util.cachedPager
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class NotesViewModel @Inject constructor(
     private val notesRepository: NotesRepository,
+    private val instanceRepository: InstanceRepository,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(NotesUIState())
     val uiState = _uiState.asStateFlow()
@@ -48,6 +49,14 @@ class NotesViewModel @Inject constructor(
         val timeline: NotesTimeline,
         val title: String,
     )
+
+    fun getEmojiMap() = instanceRepository.emojiMap
+
+    fun updateEmojis(emojis: List<String>) {
+        viewModelScope.launch(Dispatchers.IO) {
+            instanceRepository.updateEmojis(emojis)
+        }
+    }
 }
 
 data class NotesUIState(

@@ -7,8 +7,10 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import dev.hydroh.mixxy.data.local.AccountInfoDatabase
 import dev.hydroh.mixxy.data.local.dao.AccountInfoDao
+import dev.hydroh.mixxy.data.local.dao.EmojiDao
+import dev.hydroh.mixxy.data.local.db.AccountInfoDatabase
+import dev.hydroh.mixxy.data.local.db.EmojiDatabase
 import javax.inject.Singleton
 
 @InstallIn(SingletonComponent::class)
@@ -24,5 +26,17 @@ class DatabaseModule {
     @Provides
     fun provideAccountInfoDao(accountInfoDatabase: AccountInfoDatabase): AccountInfoDao {
         return accountInfoDatabase.accountInfoDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideEmojiDatabase(@ApplicationContext ctx: Context): EmojiDatabase {
+        return Room.databaseBuilder(ctx, EmojiDatabase::class.java, "emoji_data")
+            .build()
+    }
+
+    @Provides
+    fun provideEmojiDao(emojiDatabase: EmojiDatabase): EmojiDao {
+        return emojiDatabase.emojiDao()
     }
 }

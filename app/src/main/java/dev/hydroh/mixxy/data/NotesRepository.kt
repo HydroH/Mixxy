@@ -6,7 +6,9 @@ import dev.hydroh.mixxy.data.remote.MisskeyDataSource
 import dev.hydroh.mixxy.data.remote.NotesPagingSource
 import dev.hydroh.mixxy.ui.screen.notes.NotesTimeline
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class NotesRepository @Inject constructor(
     private val misskeyDataSource: MisskeyDataSource
 ) {

@@ -1,5 +1,6 @@
 package dev.hydroh.misskey.client.client
 
+import dev.hydroh.misskey.client.api.Instance
 import dev.hydroh.misskey.client.api.Notes
 import dev.hydroh.misskey.client.entity.Auth
 import io.ktor.client.HttpClient
@@ -45,6 +46,7 @@ class MisskeyClient(
     }
 
     val notes = Notes(client)
+    val instance = Instance(client)
 
     class Builder(val host: String) {
         // TODO: Permission control
