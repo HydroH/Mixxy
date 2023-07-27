@@ -24,8 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.items
-import com.skydoves.landscapist.ImageOptions
-import com.skydoves.landscapist.coil.CoilImage
+import coil.compose.AsyncImage
 import dev.hydroh.misskey.client.entity.Note
 import dev.hydroh.mixxy.data.local.model.EmojiData
 
@@ -45,11 +44,10 @@ fun NoteItem(
                 .fillMaxWidth()
                 .padding(8.dp)
         ) {
-            CoilImage(
-                imageModel = { note.user.avatarUrl },
-                imageOptions = ImageOptions(
-                    contentScale = ContentScale.Fit
-                ),
+            AsyncImage(
+                model = note.user.avatarUrl,
+                contentDescription = null,
+                contentScale = ContentScale.Fit,
                 modifier = Modifier
                     .size(50.dp)
                     .clip(CircleShape)

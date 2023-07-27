@@ -29,13 +29,13 @@ class NotesViewModel @Inject constructor(
     val homeTimeline = notesRepository.pagingFlow(NotesTimeline.HOME)
         .cachedIn(viewModelScope).cachedPager { it.id }
 
-    val localTimeline = notesRepository.pagingFlow(NotesTimeline.HOME)
+    val localTimeline = notesRepository.pagingFlow(NotesTimeline.LOCAL)
         .cachedIn(viewModelScope).cachedPager { it.id }
 
-    val hybridTimeline = notesRepository.pagingFlow(NotesTimeline.HOME)
+    val hybridTimeline = notesRepository.pagingFlow(NotesTimeline.HYBRID)
         .cachedIn(viewModelScope).cachedPager { it.id }
 
-    val globalTimeline = notesRepository.pagingFlow(NotesTimeline.HOME)
+    val globalTimeline = notesRepository.pagingFlow(NotesTimeline.GLOBAL)
         .cachedIn(viewModelScope).cachedPager { it.id }
 
     val tabs = listOf(

@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -30,6 +31,7 @@ import dev.hydroh.mixxy.ui.screen.destinations.LoginScreenDestination
 import dev.hydroh.mixxy.ui.screen.destinations.NotesScreenDestination
 import dev.hydroh.mixxy.ui.screen.destinations.RedirectScreenDestination
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Destination
 @Composable
 fun LoginScreen(

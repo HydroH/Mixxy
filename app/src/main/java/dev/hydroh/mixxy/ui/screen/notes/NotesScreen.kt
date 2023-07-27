@@ -64,6 +64,7 @@ fun NotesScreen(
         HorizontalPager(
             pageCount = viewModel.tabs.count(),
             state = pagerState,
+            beyondBoundsPageCount = 1,
         )
         { page ->
             val timeline = when (viewModel.tabs[page].timeline) {

@@ -14,8 +14,7 @@ import androidx.compose.ui.text.PlaceholderVerticalAlign
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.em
-import com.skydoves.landscapist.ImageOptions
-import com.skydoves.landscapist.coil.CoilImage
+import coil.compose.AsyncImage
 import dev.hydroh.mixxy.data.local.model.EmojiData
 import dev.hydroh.mixxy.util.EmojiAnnotatedString
 
@@ -38,7 +37,7 @@ fun EmojiText(
     LaunchedEffect(Unit) {
         updateEmojis(emojiAnnotatedString.emojis)
     }
-    LaunchedEffect(emojiMap.size) {
+    LaunchedEffect(emojiMap.toMap()) {
         emojiAnnotatedString.emojis.forEach { name ->
             if (emojiMap.contains(name)) {
                 inlineContentMap[name] = InlineTextContent(
@@ -48,11 +47,10 @@ fun EmojiText(
                         PlaceholderVerticalAlign.TextCenter
                     )
                 ) {
-                    CoilImage(
-                        imageModel = { emojiMap[name]!!.url },
-                        imageOptions = ImageOptions(
-                            contentScale = ContentScale.Fit
-                        )
+                    AsyncImage(
+                        model = emojiMap[name]!!.url,
+                        contentDescription = null,
+                        contentScale = ContentScale.Fit,
                     )
                 }
             }

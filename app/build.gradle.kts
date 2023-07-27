@@ -89,9 +89,12 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
 
+    implementation("io.coil-kt:coil:2.4.0")
+    implementation("io.coil-kt:coil-compose:2.4.0")
+    implementation("io.coil-kt:coil-gif:2.4.0")
+
     implementation("io.github.raamcosta.compose-destinations:core:1.9.42-beta")
     ksp("io.github.raamcosta.compose-destinations:ksp:1.9.42-beta")
-    implementation("com.github.skydoves:landscapist-coil:2.2.3")
 }
 
 kapt {
