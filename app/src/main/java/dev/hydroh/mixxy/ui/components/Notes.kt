@@ -54,13 +54,22 @@ fun NoteItem(
             )
             Spacer(modifier = Modifier.width(8.dp))
             Column {
-                EmojiText(
-                    text = note.user.name ?: note.user.username,
-                    emojiMap = emojiMap,
-                    updateEmojis = updateEmojis,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 16.sp
-                )
+                if (note.user.emojis.isEmpty()) {
+                    EmojiText(
+                        text = note.user.name ?: note.user.username,
+                        emojiMap = emojiMap,
+                        updateEmojis = updateEmojis,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 16.sp
+                    )
+                } else {
+                    EmojiText(
+                        text = note.user.name ?: note.user.username,
+                        externalEmojiMap = note.user.emojis,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 16.sp
+                    )
+                }
                 Text(
                     text = if (note.user.host != null) "${note.user.username}@${note.user.host}"
                     else note.user.username,
@@ -68,12 +77,20 @@ fun NoteItem(
                     fontSize = 14.sp
                 )
                 Spacer(modifier = Modifier.height(8.dp))
-                EmojiText(
-                    text = note.text ?: "",
-                    emojiMap = emojiMap,
-                    updateEmojis = updateEmojis,
-                    fontSize = 16.sp
-                )
+                if (note.emojis.isNullOrEmpty()) {
+                    EmojiText(
+                        text = note.text ?: "",
+                        emojiMap = emojiMap,
+                        updateEmojis = updateEmojis,
+                        fontSize = 16.sp
+                    )
+                } else {
+                    EmojiText(
+                        text = note.text ?: "",
+                        externalEmojiMap = note.emojis!!,
+                        fontSize = 16.sp
+                    )
+                }
             }
         }
     }
