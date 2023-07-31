@@ -2,12 +2,15 @@ package dev.hydroh.mixxy.ui.components
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
 @Composable
@@ -15,7 +18,7 @@ fun VerticalGrid(
     columns: Int,
     itemCount: Int,
     modifier: Modifier = Modifier,
-    contentPadding: PaddingValues = PaddingValues(0.dp),
+    contentPadding: Dp = 0.dp,
     content: @Composable (Int) -> Unit
 ) {
     Column(modifier = modifier) {
@@ -31,7 +34,6 @@ fun VerticalGrid(
                     val index = firstIndex + columnId
                     Box(
                         modifier = Modifier
-                            .padding(contentPadding)
                             .fillMaxWidth()
                             .weight(1f)
                     ) {
@@ -39,7 +41,17 @@ fun VerticalGrid(
                             content(index)
                         }
                     }
+                    if (columnId < columns - 1) {
+                        Spacer(modifier = Modifier
+                            .width(contentPadding)
+                            .fillMaxHeight())
+                    }
                 }
+            }
+            if (rowId < rows - 1) {
+                Spacer(modifier = Modifier
+                    .height(contentPadding)
+                    .fillMaxWidth())
             }
         }
     }

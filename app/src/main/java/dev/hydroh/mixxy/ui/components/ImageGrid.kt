@@ -2,17 +2,22 @@ package dev.hydroh.mixxy.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
@@ -36,38 +41,100 @@ fun ImageGrid(
             gridId + files[index].id
         }
     val scope = rememberCoroutineScope()
+    val contentPadding = 4.dp
+    val roundCorner = 6.dp
 
     when (files.count()) {
         1 -> {
-            Box(modifier = modifier.padding(2.dp)) {
+            Box(modifier = modifier.fillMaxSize()) {
                 TransformImageView(
                     key = gridId + files[0].id,
                     painter = rememberAsyncImagePainter(model = files[0].thumbnailUrl),
                     previewerState = previewerState,
-                    modifier = Modifier.clickable {
-                        scope.launch { previewerState.openTransform(0) }
-                    }
+                    modifier = Modifier
+                        .clickable {
+                            scope.launch { previewerState.openTransform(0) }
+                        }
+                        .clip(RoundedCornerShape(roundCorner))
                 )
             }
         }
 
-        2, 3, 4 -> {
+        2, 4 -> {
             VerticalGrid(
                 columns = 2,
                 itemCount = files.count(),
-                contentPadding = PaddingValues(2.dp),
-                modifier = modifier,
+                contentPadding = contentPadding,
+                modifier = modifier.fillMaxSize(),
             ) { index ->
                 TransformImageView(
                     key = gridId + files[index].id,
                     painter = rememberAsyncImagePainter(model = files[index].thumbnailUrl),
                     previewerState = previewerState,
-                    modifier = Modifier.pointerInput(Unit) {
-                        detectTapGestures {
+                    modifier = Modifier
+                        .clickable {
                             scope.launch { previewerState.openTransform(index) }
                         }
-                    }
+                        .clip(RoundedCornerShape(roundCorner))
                 )
+            }
+        }
+
+        3 -> {
+            Row(modifier = modifier.fillMaxSize()) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .weight(1f)
+                ) {
+                    TransformImageView(
+                        key = gridId + files[0].id,
+                        painter = rememberAsyncImagePainter(model = files[0].thumbnailUrl),
+                        previewerState = previewerState,
+                        modifier = Modifier
+                            .clickable {
+                                scope.launch { previewerState.openTransform(0) }
+                            }
+                            .clip(RoundedCornerShape(4.dp))
+                            .fillMaxSize()
+                    )
+                }
+                Spacer(modifier = Modifier
+                    .width(contentPadding)
+                    .fillMaxHeight())
+                Column(
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .weight(1f),
+                ) {
+                    TransformImageView(
+                        key = gridId + files[1].id,
+                        painter = rememberAsyncImagePainter(model = files[1].thumbnailUrl),
+                        previewerState = previewerState,
+                        modifier = Modifier
+                            .clickable {
+                                scope.launch { previewerState.openTransform(1) }
+                            }
+                            .clip(RoundedCornerShape(roundCorner))
+                            .weight(1f)
+                            .fillMaxWidth()
+                    )
+                    Spacer(modifier = Modifier
+                        .height(contentPadding)
+                        .fillMaxWidth())
+                    TransformImageView(
+                        key = gridId + files[2].id,
+                        painter = rememberAsyncImagePainter(model = files[2].thumbnailUrl),
+                        previewerState = previewerState,
+                        modifier = Modifier
+                            .clickable {
+                                scope.launch { previewerState.openTransform(2) }
+                            }
+                            .clip(RoundedCornerShape(roundCorner))
+                            .weight(1f)
+                            .fillMaxWidth()
+                    )
+                }
             }
         }
 
@@ -75,18 +142,18 @@ fun ImageGrid(
             VerticalGrid(
                 columns = 3,
                 itemCount = files.count(),
-                contentPadding = PaddingValues(2.dp),
-                modifier = modifier,
+                contentPadding = contentPadding,
+                modifier = modifier.fillMaxSize(),
             ) { index ->
                 TransformImageView(
                     key = gridId + files[index].id,
                     painter = rememberAsyncImagePainter(model = files[index].thumbnailUrl),
                     previewerState = previewerState,
-                    modifier = Modifier.pointerInput(Unit) {
-                        detectTapGestures {
-                            scope.launch { previewerState.openTransform(index) }
+                    modifier = Modifier
+                        .clickable {
+                            scope.launch { previewerState.openTransform(0) }
                         }
-                    }
+                        .clip(RoundedCornerShape(roundCorner))
                 )
             }
         }
@@ -101,9 +168,11 @@ fun ImageGrid(
                 dismissOnClickOutside = false,
             ),
         ) {
-            BoxWithConstraints(modifier = Modifier
-                .fillMaxSize()
-                .background(Color.Transparent)) {
+            BoxWithConstraints(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.Transparent)
+            ) {
                 ImagePreviewer(
                     count = files.count(),
                     state = previewerState,

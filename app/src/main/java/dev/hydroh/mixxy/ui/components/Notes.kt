@@ -70,7 +70,7 @@ fun NoteItem(
                     fontSize = 14.sp
                 )
                 if (!note.text.isNullOrEmpty()) {
-                    Spacer(modifier = Modifier.height(6.dp))
+                    Spacer(modifier = Modifier.height(4.dp))
                     EmojiText(
                         text = note.text ?: "",
                         emojiMap = emojiMap,
@@ -80,11 +80,12 @@ fun NoteItem(
                     )
                 }
                 if (note.files.isNotEmpty()) {
+                    Spacer(modifier = Modifier.height(4.dp))
                     ImageGrid(
                         files = note.files,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .aspectRatio(1f),
+                            .aspectRatio(1.5f),
                         gridId = note.id,
                     )
                 }
