@@ -3,6 +3,7 @@ package dev.hydroh.mixxy.ui.components
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -33,7 +34,7 @@ fun NoteItem(
     note: Note,
     emojiMap: SnapshotStateMap<String, EmojiData>,
     updateEmojis: (List<String>) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     ElevatedCard(
         shape = RoundedCornerShape(4.dp),
@@ -54,41 +55,37 @@ fun NoteItem(
             )
             Spacer(modifier = Modifier.width(8.dp))
             Column {
-                if (note.user.emojis.isEmpty()) {
-                    EmojiText(
-                        text = note.user.name ?: note.user.username,
-                        emojiMap = emojiMap,
-                        updateEmojis = updateEmojis,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 16.sp
-                    )
-                } else {
-                    EmojiText(
-                        text = note.user.name ?: note.user.username,
-                        externalEmojiMap = note.user.emojis,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 16.sp
-                    )
-                }
+                EmojiText(
+                    text = note.user.name ?: note.user.username,
+                    emojiMap = emojiMap,
+                    updateEmojis = updateEmojis,
+                    externalEmojiMap = note.user.emojis,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 16.sp
+                )
                 Text(
                     text = if (note.user.host != null) "${note.user.username}@${note.user.host}"
                     else note.user.username,
                     color = Color.Gray,
                     fontSize = 14.sp
                 )
-                Spacer(modifier = Modifier.height(8.dp))
-                if (note.emojis.isNullOrEmpty()) {
+                if (!note.text.isNullOrEmpty()) {
+                    Spacer(modifier = Modifier.height(6.dp))
                     EmojiText(
                         text = note.text ?: "",
                         emojiMap = emojiMap,
                         updateEmojis = updateEmojis,
+                        externalEmojiMap = note.emojis,
                         fontSize = 16.sp
                     )
-                } else {
-                    EmojiText(
-                        text = note.text ?: "",
-                        externalEmojiMap = note.emojis!!,
-                        fontSize = 16.sp
+                }
+                if (note.files.isNotEmpty()) {
+                    ImageGrid(
+                        files = note.files,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .aspectRatio(1f),
+                        gridId = note.id,
                     )
                 }
             }
@@ -101,7 +98,7 @@ fun NoteItemList(
     notes: LazyPagingItems<Note>,
     emojiMap: SnapshotStateMap<String, EmojiData>,
     updateEmojis: (List<String>) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     LazyColumn(modifier = modifier) {
         items(
@@ -115,7 +112,7 @@ fun NoteItemList(
                     updateEmojis = updateEmojis,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 8.dp, vertical = 3.dp)
+                        .padding(horizontal = 8.dp, vertical = 3.dp),
                 )
             }
         }

@@ -64,7 +64,6 @@ fun NotesScreen(
         HorizontalPager(
             pageCount = viewModel.tabs.count(),
             state = pagerState,
-            beyondBoundsPageCount = 1,
         )
         { page ->
             val timeline = when (viewModel.tabs[page].timeline) {
@@ -87,7 +86,7 @@ fun NotesScreen(
                     notes = pagingItems,
                     emojiMap = viewModel.getEmojiMap(),
                     updateEmojis = viewModel::updateEmojis,
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
                 )
                 PullRefreshIndicator(
                     refreshing = pagingItems.loadState.refresh is LoadState.Loading,

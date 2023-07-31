@@ -8,12 +8,12 @@ plugins {
 
 android {
     namespace = "dev.hydroh.mixxy"
-    compileSdk = 33
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "dev.hydroh.mixxy"
         minSdk = 24
-        targetSdk = 33
+        targetSdk = 34
         versionCode = 1
         versionName = "1.0"
 
@@ -33,22 +33,28 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = JavaVersion.VERSION_17.toString()
     }
     buildFeatures {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.4.4-dev-k1.8.20-f6ae19e64ff"
+        kotlinCompilerExtensionVersion = "1.5.1"
     }
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
+    }
+}
+
+configurations.all {
+    resolutionStrategy {
+        force("androidx.compose.foundation:foundation:1.4.3")
     }
 }
 
@@ -71,7 +77,7 @@ dependencies {
     implementation("androidx.room:room-ktx:2.5.1")
     implementation("androidx.room:room-paging:2.5.1")
 
-    implementation(platform("androidx.compose:compose-bom:2023.03.00"))
+    implementation(platform("androidx.compose:compose-bom:2023.06.01"))
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
@@ -92,9 +98,10 @@ dependencies {
     implementation("io.coil-kt:coil:2.4.0")
     implementation("io.coil-kt:coil-compose:2.4.0")
     implementation("io.coil-kt:coil-gif:2.4.0")
+    implementation("com.github.jvziyaoyao:ImageViewer:1.0.2-alpha.4")
 
-    implementation("io.github.raamcosta.compose-destinations:core:1.9.42-beta")
-    ksp("io.github.raamcosta.compose-destinations:ksp:1.9.42-beta")
+    implementation("io.github.raamcosta.compose-destinations:core:1.9.51")
+    ksp("io.github.raamcosta.compose-destinations:ksp:1.9.51")
 }
 
 kapt {

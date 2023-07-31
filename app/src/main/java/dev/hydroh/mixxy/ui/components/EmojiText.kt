@@ -25,6 +25,37 @@ fun EmojiText(
     emojiMap: SnapshotStateMap<String, EmojiData>,
     updateEmojis: (List<String>) -> Unit,
     modifier: Modifier = Modifier,
+    externalEmojiMap: Map<String, String>? = null,
+    fontSize: TextUnit = TextUnit.Unspecified,
+    fontWeight: FontWeight? = null
+) {
+    if (externalEmojiMap.isNullOrEmpty()) {
+        LocalEmojiText(
+            text = text,
+            emojiMap = emojiMap,
+            updateEmojis = updateEmojis,
+            modifier = modifier,
+            fontSize = fontSize,
+            fontWeight = fontWeight,
+        )
+    } else {
+        ExternalEmojiText(
+            text = text,
+            externalEmojiMap = externalEmojiMap,
+            modifier = modifier,
+            fontSize = fontSize,
+            fontWeight = fontWeight,
+        )
+    }
+}
+
+
+@Composable
+fun LocalEmojiText(
+    text: String,
+    emojiMap: SnapshotStateMap<String, EmojiData>,
+    updateEmojis: (List<String>) -> Unit,
+    modifier: Modifier = Modifier,
     fontSize: TextUnit = TextUnit.Unspecified,
     fontWeight: FontWeight? = null
 ) {
@@ -48,7 +79,7 @@ fun EmojiText(
                     Placeholder(
                         width = 1.2.em * (aspectRatioMap[emoji] ?: 1f),
                         height = 1.2.em,
-                        placeholderVerticalAlign =  PlaceholderVerticalAlign.TextCenter
+                        placeholderVerticalAlign = PlaceholderVerticalAlign.TextCenter
                     )
                 ) {
                     AsyncImage(
@@ -76,7 +107,7 @@ fun EmojiText(
 }
 
 @Composable
-fun EmojiText(
+fun ExternalEmojiText(
     text: String,
     externalEmojiMap: Map<String, String>,
     modifier: Modifier = Modifier,
@@ -92,26 +123,28 @@ fun EmojiText(
     val aspectRatioMap = remember {
         mutableStateMapOf<String, Float>()
     }
-    
+
     LaunchedEffect(aspectRatioMap.toMap()) {
-        externalEmojiMap.mapValues {  entry ->
-            inlineContentMap[entry.key] = InlineTextContent(
-                Placeholder(
-                    width = 1.2.em * (aspectRatioMap[entry.key] ?: 1f),
-                    height = 1.2.em,
-                    placeholderVerticalAlign =  PlaceholderVerticalAlign.TextCenter
-                )
-            ) {
-                AsyncImage(
-                    model = entry.value,
-                    contentDescription = null,
-                    contentScale = ContentScale.FillHeight,
-                    onSuccess = {
-                        it.result.drawable.toBitmap().apply {
-                            aspectRatioMap[entry.key] = width.toFloat() / height.toFloat()
+        emojiAnnotatedString.emojis.forEach { emoji ->
+            if (externalEmojiMap.contains(emoji)) {
+                inlineContentMap[emoji] = InlineTextContent(
+                    Placeholder(
+                        width = 1.2.em * (aspectRatioMap[emoji] ?: 1f),
+                        height = 1.2.em,
+                        placeholderVerticalAlign = PlaceholderVerticalAlign.TextCenter
+                    )
+                ) {
+                    AsyncImage(
+                        model = externalEmojiMap[emoji],
+                        contentDescription = null,
+                        contentScale = ContentScale.FillHeight,
+                        onSuccess = {
+                            it.result.drawable.toBitmap().apply {
+                                aspectRatioMap[emoji] = width.toFloat() / height.toFloat()
+                            }
                         }
-                    }
-                )
+                    )
+                }
             }
         }
     }
