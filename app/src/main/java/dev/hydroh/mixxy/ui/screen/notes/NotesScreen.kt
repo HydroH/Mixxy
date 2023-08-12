@@ -87,6 +87,7 @@ fun NotesScreen(
                     emojiMap = viewModel.getEmojiMap(),
                     updateEmojis = viewModel::updateEmojis,
                     modifier = Modifier.fillMaxWidth(),
+                    prefixId = viewModel.tabs[page].timeline.name,
                 )
                 PullRefreshIndicator(
                     refreshing = pagingItems.loadState.refresh is LoadState.Loading,
