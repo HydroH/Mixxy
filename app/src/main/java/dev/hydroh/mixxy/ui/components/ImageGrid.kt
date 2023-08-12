@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -46,7 +47,11 @@ fun ImageGrid(
 
     when (files.count()) {
         1 -> {
-            Box(modifier = modifier.fillMaxSize()) {
+            Box(
+                modifier = modifier
+                    .fillMaxSize()
+                    .aspectRatio(1f),
+            ) {
                 TransformImageView(
                     key = gridId + files[0].id,
                     painter = rememberAsyncImagePainter(model = files[0].thumbnailUrl),
@@ -66,6 +71,7 @@ fun ImageGrid(
                 itemCount = files.count(),
                 contentPadding = contentPadding,
                 modifier = modifier.fillMaxSize(),
+                aspectRatio = if (files.count() == 2) 0.75f else 1.5f,
             ) { index ->
                 TransformImageView(
                     key = gridId + files[index].id,
@@ -86,6 +92,7 @@ fun ImageGrid(
                     modifier = Modifier
                         .fillMaxHeight()
                         .weight(1f)
+                        .aspectRatio(0.75f),
                 ) {
                     TransformImageView(
                         key = gridId + files[0].id,
@@ -99,12 +106,15 @@ fun ImageGrid(
                             .fillMaxSize()
                     )
                 }
-                Spacer(modifier = Modifier
-                    .width(contentPadding)
-                    .fillMaxHeight())
+                Spacer(
+                    modifier = Modifier
+                        .width(contentPadding)
+                        .fillMaxHeight()
+                )
                 Column(
                     modifier = Modifier
                         .fillMaxHeight()
+                        .aspectRatio(0.75f)
                         .weight(1f),
                 ) {
                     TransformImageView(
@@ -119,9 +129,11 @@ fun ImageGrid(
                             .weight(1f)
                             .fillMaxWidth()
                     )
-                    Spacer(modifier = Modifier
-                        .height(contentPadding)
-                        .fillMaxWidth())
+                    Spacer(
+                        modifier = Modifier
+                            .height(contentPadding)
+                            .fillMaxWidth()
+                    )
                     TransformImageView(
                         key = gridId + files[2].id,
                         painter = rememberAsyncImagePainter(model = files[2].thumbnailUrl),
@@ -144,6 +156,7 @@ fun ImageGrid(
                 itemCount = files.count(),
                 contentPadding = contentPadding,
                 modifier = modifier.fillMaxSize(),
+                aspectRatio = 1f,
             ) { index ->
                 TransformImageView(
                     key = gridId + files[index].id,

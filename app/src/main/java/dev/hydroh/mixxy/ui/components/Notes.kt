@@ -3,7 +3,6 @@ package dev.hydroh.mixxy.ui.components
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -85,8 +84,7 @@ fun NoteItem(
                     ImageGrid(
                         files = note.files,
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .aspectRatio(1.5f),
+                            .fillMaxWidth(),
                         gridId = prefixId + note.id,
                     )
                 }
