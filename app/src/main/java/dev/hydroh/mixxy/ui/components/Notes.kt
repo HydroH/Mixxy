@@ -34,7 +34,6 @@ fun NoteItem(
     emojiMap: SnapshotStateMap<String, EmojiData>,
     updateEmojis: (List<String>) -> Unit,
     modifier: Modifier = Modifier,
-    prefixId: String = "",
 ) {
     ElevatedCard(
         shape = RoundedCornerShape(4.dp),
@@ -85,7 +84,6 @@ fun NoteItem(
                         files = note.files,
                         modifier = Modifier
                             .fillMaxWidth(),
-                        gridId = prefixId + note.id,
                     )
                 }
             }
@@ -99,7 +97,6 @@ fun NoteItemList(
     emojiMap: SnapshotStateMap<String, EmojiData>,
     updateEmojis: (List<String>) -> Unit,
     modifier: Modifier = Modifier,
-    prefixId: String = "",
 ) {
     LazyColumn(modifier = modifier) {
         items(
@@ -114,7 +111,6 @@ fun NoteItemList(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 8.dp, vertical = 3.dp),
-                    prefixId = prefixId,
                 )
             }
         }

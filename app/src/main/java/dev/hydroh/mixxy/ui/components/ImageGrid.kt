@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -30,16 +31,17 @@ import com.origeek.imageViewer.previewer.TransformImageView
 import com.origeek.imageViewer.previewer.rememberPreviewerState
 import dev.hydroh.misskey.client.entity.DriveFile
 import kotlinx.coroutines.launch
+import java.util.UUID
 
 @Composable
 fun ImageGrid(
     files: List<DriveFile>,
     modifier: Modifier = Modifier,
-    gridId: String = "",
 ) {
+    val gridId = remember { UUID.randomUUID().toString() }
     val previewerState =
         rememberPreviewerState(enableVerticalDrag = true) { index ->
-            gridId + files[index].id
+            gridId + index.toString()
         }
     val scope = rememberCoroutineScope()
     val contentPadding = 4.dp
@@ -53,7 +55,7 @@ fun ImageGrid(
                     .aspectRatio(1f),
             ) {
                 TransformImageView(
-                    key = gridId + files[0].id,
+                    key = gridId + "0",
                     painter = rememberAsyncImagePainter(model = files[0].thumbnailUrl),
                     previewerState = previewerState,
                     modifier = Modifier
@@ -74,7 +76,7 @@ fun ImageGrid(
                 aspectRatio = if (files.count() == 2) 0.75f else 1.5f,
             ) { index ->
                 TransformImageView(
-                    key = gridId + files[index].id,
+                    key = gridId + index.toString(),
                     painter = rememberAsyncImagePainter(model = files[index].thumbnailUrl),
                     previewerState = previewerState,
                     modifier = Modifier
@@ -95,7 +97,7 @@ fun ImageGrid(
                         .aspectRatio(0.75f),
                 ) {
                     TransformImageView(
-                        key = gridId + files[0].id,
+                        key = gridId + "0",
                         painter = rememberAsyncImagePainter(model = files[0].thumbnailUrl),
                         previewerState = previewerState,
                         modifier = Modifier
@@ -118,7 +120,7 @@ fun ImageGrid(
                         .weight(1f),
                 ) {
                     TransformImageView(
-                        key = gridId + files[1].id,
+                        key = gridId + "1",
                         painter = rememberAsyncImagePainter(model = files[1].thumbnailUrl),
                         previewerState = previewerState,
                         modifier = Modifier
@@ -135,7 +137,7 @@ fun ImageGrid(
                             .fillMaxWidth()
                     )
                     TransformImageView(
-                        key = gridId + files[2].id,
+                        key = gridId + "2",
                         painter = rememberAsyncImagePainter(model = files[2].thumbnailUrl),
                         previewerState = previewerState,
                         modifier = Modifier
@@ -159,7 +161,7 @@ fun ImageGrid(
                 aspectRatio = 1f,
             ) { index ->
                 TransformImageView(
-                    key = gridId + files[index].id,
+                    key = gridId + index.toString(),
                     painter = rememberAsyncImagePainter(model = files[index].thumbnailUrl),
                     previewerState = previewerState,
                     modifier = Modifier
