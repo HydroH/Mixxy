@@ -1,4 +1,4 @@
-package dev.hydroh.mixxy.ui.screen.notes
+package dev.hydroh.mixxy.ui.screen.timeline
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Box
@@ -32,9 +32,9 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterialApi::class)
 @Destination
 @Composable
-fun NotesScreen(
+fun TimelineScreen(
     navigator: DestinationsNavigator? = null,
-    viewModel: NotesViewModel = hiltViewModel(),
+    viewModel: TimelineViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -67,10 +67,10 @@ fun NotesScreen(
         )
         { page ->
             val timeline = when (viewModel.tabs[page].timeline) {
-                NotesTimeline.HOME -> viewModel.homeTimeline
-                NotesTimeline.LOCAL -> viewModel.localTimeline
-                NotesTimeline.HYBRID -> viewModel.hybridTimeline
-                NotesTimeline.GLOBAL -> viewModel.globalTimeline
+                Timeline.HOME -> viewModel.homeTimeline
+                Timeline.LOCAL -> viewModel.localTimeline
+                Timeline.HYBRID -> viewModel.hybridTimeline
+                Timeline.GLOBAL -> viewModel.globalTimeline
             }
             val pagingItems = timeline.pager.collectAsLazyPagingItems()
             val pullRefreshState = rememberPullRefreshState(

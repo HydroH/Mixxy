@@ -1,4 +1,4 @@
-package dev.hydroh.mixxy.ui.screen.notes
+package dev.hydroh.mixxy.ui.screen.timeline
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -15,38 +15,34 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class NotesViewModel @Inject constructor(
+class TimelineViewModel @Inject constructor(
     private val notesRepository: NotesRepository,
     private val instanceRepository: InstanceRepository,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(NotesUIState())
     val uiState = _uiState.asStateFlow()
 
-    companion object {
-        const val PAGE_SIZE = 20
-    }
-
-    val homeTimeline = notesRepository.pagingFlow(NotesTimeline.HOME)
+    val homeTimeline = notesRepository.pagingFlow(Timeline.HOME)
         .cachedIn(viewModelScope).cachedPager { it.id }
 
-    val localTimeline = notesRepository.pagingFlow(NotesTimeline.LOCAL)
+    val localTimeline = notesRepository.pagingFlow(Timeline.LOCAL)
         .cachedIn(viewModelScope).cachedPager { it.id }
 
-    val hybridTimeline = notesRepository.pagingFlow(NotesTimeline.HYBRID)
+    val hybridTimeline = notesRepository.pagingFlow(Timeline.HYBRID)
         .cachedIn(viewModelScope).cachedPager { it.id }
 
-    val globalTimeline = notesRepository.pagingFlow(NotesTimeline.GLOBAL)
+    val globalTimeline = notesRepository.pagingFlow(Timeline.GLOBAL)
         .cachedIn(viewModelScope).cachedPager { it.id }
 
     val tabs = listOf(
-        TabInfo(timeline = NotesTimeline.HOME, title = "Home"),
-        TabInfo(timeline = NotesTimeline.LOCAL, title = "Local"),
-        TabInfo(timeline = NotesTimeline.HYBRID, title = "Hybrid"),
-        TabInfo(timeline = NotesTimeline.GLOBAL, title = "Global"),
+        TabInfo(timeline = Timeline.HOME, title = "Home"),
+        TabInfo(timeline = Timeline.LOCAL, title = "Local"),
+        TabInfo(timeline = Timeline.HYBRID, title = "Hybrid"),
+        TabInfo(timeline = Timeline.GLOBAL, title = "Global"),
     )
 
     data class TabInfo(
-        val timeline: NotesTimeline,
+        val timeline: Timeline,
         val title: String,
     )
 
@@ -64,7 +60,7 @@ data class NotesUIState(
     val errorMessage: String? = null,
 )
 
-enum class NotesTimeline {
+enum class Timeline {
     HOME,
     LOCAL,
     HYBRID,
