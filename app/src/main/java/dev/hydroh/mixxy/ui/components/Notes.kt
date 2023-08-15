@@ -63,8 +63,8 @@ fun NoteItem(
                     fontSize = 16.sp
                 )
                 Text(
-                    text = if (note.user.host != null) "${note.user.username}@${note.user.host}"
-                    else note.user.username,
+                    text = if (note.user.host != null) "@${note.user.username}@${note.user.host}"
+                    else "@${note.user.username}",
                     color = Color.Gray,
                     fontSize = 14.sp
                 )
@@ -84,6 +84,18 @@ fun NoteItem(
                         files = note.files,
                         modifier = Modifier
                             .fillMaxWidth(),
+                    )
+                }
+                if (note.reactions.isNotEmpty()) {
+                    Spacer(modifier = Modifier.height(4.dp))
+                    EmojiReactions(
+                        reactions = note.reactions,
+                        onClick = {},
+                        emojiMap = emojiMap,
+                        updateEmojis = updateEmojis,
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        externalEmojiMap = note.reactionEmojis,
                     )
                 }
             }

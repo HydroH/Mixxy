@@ -28,8 +28,8 @@ import com.ramcosta.composedestinations.result.NavResult
 import com.ramcosta.composedestinations.result.ResultRecipient
 import dev.hydroh.mixxy.ui.components.LoadingState
 import dev.hydroh.mixxy.ui.screen.destinations.LoginScreenDestination
-import dev.hydroh.mixxy.ui.screen.destinations.NotesScreenDestination
 import dev.hydroh.mixxy.ui.screen.destinations.RedirectScreenDestination
+import dev.hydroh.mixxy.ui.screen.destinations.TimelineScreenDestination
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Destination
@@ -51,7 +51,7 @@ fun LoginScreen(
     }
     LaunchedEffect(uiState.loadingState) {
         if (uiState.loadingState == LoadingState.SUCCESS) {
-            navigator?.navigate(NotesScreenDestination) {
+            navigator?.navigate(TimelineScreenDestination) {
                 popUpTo(LoginScreenDestination) {
                     inclusive = true
                 }

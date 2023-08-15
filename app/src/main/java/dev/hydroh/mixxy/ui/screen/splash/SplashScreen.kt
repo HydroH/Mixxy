@@ -8,8 +8,8 @@ import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.navigation.popUpTo
 import dev.hydroh.mixxy.ui.screen.destinations.LoginScreenDestination
-import dev.hydroh.mixxy.ui.screen.destinations.NotesScreenDestination
 import dev.hydroh.mixxy.ui.screen.destinations.SplashScreenDestination
+import dev.hydroh.mixxy.ui.screen.destinations.TimelineScreenDestination
 
 @RootNavGraph(start = true)
 @Destination
@@ -21,7 +21,7 @@ fun SplashScreen(
     LaunchedEffect(Unit) {
         if (viewModel.loadAccount()) {
             viewModel.loadEmojis()
-            navigator?.navigate(NotesScreenDestination) {
+            navigator?.navigate(TimelineScreenDestination) {
                 popUpTo(SplashScreenDestination) {
                     inclusive = true
                 }
