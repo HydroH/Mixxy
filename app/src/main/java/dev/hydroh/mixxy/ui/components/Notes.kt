@@ -1,6 +1,8 @@
 package dev.hydroh.mixxy.ui.components
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -10,8 +12,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.snapshots.SnapshotStateMap
@@ -35,24 +38,27 @@ fun NoteItem(
     updateEmojis: (List<String>) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    ElevatedCard(
-        shape = RoundedCornerShape(4.dp),
-        modifier = modifier
+    Card(
+        modifier = modifier,
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface,
+            contentColor = MaterialTheme.colorScheme.onSurface,
+        ),
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(8.dp)
+                .padding(12.dp)
         ) {
             AsyncImage(
                 model = note.user.avatarUrl,
                 contentDescription = null,
-                contentScale = ContentScale.Fit,
+                contentScale = ContentScale.Crop,
                 modifier = Modifier
-                    .size(50.dp)
+                    .size(48.dp)
                     .clip(CircleShape)
             )
-            Spacer(modifier = Modifier.width(8.dp))
+            Spacer(modifier = Modifier.width(12.dp))
             Column {
                 EmojiText(
                     text = note.user.name ?: note.user.username,
@@ -62,6 +68,7 @@ fun NoteItem(
                     fontWeight = FontWeight.Bold,
                     fontSize = 16.sp
                 )
+                Spacer(modifier = Modifier.height(2.dp))
                 Text(
                     text = if (note.user.host != null) "@${note.user.username}@${note.user.host}"
                     else "@${note.user.username}",
@@ -69,7 +76,7 @@ fun NoteItem(
                     fontSize = 14.sp
                 )
                 if (!note.text.isNullOrEmpty()) {
-                    Spacer(modifier = Modifier.height(4.dp))
+                    Spacer(modifier = Modifier.height(2.dp))
                     EmojiText(
                         text = note.text ?: "",
                         emojiMap = emojiMap,
@@ -79,11 +86,12 @@ fun NoteItem(
                     )
                 }
                 if (note.files.isNotEmpty()) {
-                    Spacer(modifier = Modifier.height(4.dp))
+                    Spacer(modifier = Modifier.height(2.dp))
                     ImageGrid(
                         files = note.files,
                         modifier = Modifier
-                            .fillMaxWidth(),
+                            .fillMaxWidth()
+                            .padding(vertical = 4.dp),
                     )
                 }
                 if (note.reactions.isNotEmpty()) {
@@ -110,7 +118,11 @@ fun NoteItemList(
     updateEmojis: (List<String>) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    LazyColumn(modifier = modifier) {
+    LazyColumn(
+        modifier = modifier.fillMaxWidth(),
+        contentPadding = PaddingValues(16.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
         items(
             items = notes,
             key = { note -> note.id }
@@ -122,7 +134,6 @@ fun NoteItemList(
                     updateEmojis = updateEmojis,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 8.dp, vertical = 3.dp),
                 )
             }
         }

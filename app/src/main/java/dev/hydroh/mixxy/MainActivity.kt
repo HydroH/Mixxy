@@ -32,7 +32,7 @@ class MainActivity : ComponentActivity() {
 fun MixxyApp() {
     Surface(
         modifier = Modifier.fillMaxSize(),
-        color = MaterialTheme.colorScheme.background
+        color = MaterialTheme.colorScheme.surfaceVariant
     ) {
         DestinationsNavHost(navGraph = NavGraphs.root)
     }
