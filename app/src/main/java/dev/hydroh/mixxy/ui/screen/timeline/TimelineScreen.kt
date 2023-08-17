@@ -3,6 +3,7 @@ package dev.hydroh.mixxy.ui.screen.timeline
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -81,6 +82,7 @@ fun TimelineScreen(
                 })
             Box(
                 modifier = Modifier.pullRefresh(pullRefreshState)
+                    .fillMaxSize()
             ) {
                 NoteItemList(
                     notes = pagingItems,

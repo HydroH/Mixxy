@@ -45,66 +45,86 @@ fun NoteItem(
             contentColor = MaterialTheme.colorScheme.onSurface,
         ),
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(12.dp)
-        ) {
-            AsyncImage(
-                model = note.user.avatarUrl,
-                contentDescription = null,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .size(48.dp)
-                    .clip(CircleShape)
-            )
-            Spacer(modifier = Modifier.width(12.dp))
-            Column {
+        if (note.text.isNullOrEmpty() && note.renote != null) {
+            Column(
+                modifier = Modifier.fillMaxWidth()
+            ) {
                 EmojiText(
-                    text = note.user.name ?: note.user.username,
+                    text = "由 ${note.user.name ?: note.user.username} 转发",
                     emojiMap = emojiMap,
                     updateEmojis = updateEmojis,
                     externalEmojiMap = note.user.emojis,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 16.sp
+                    fontSize = 14.sp,
+                    modifier = Modifier.padding(16.dp, 12.dp, 0.dp, 0.dp)
                 )
-                Spacer(modifier = Modifier.height(2.dp))
-                Text(
-                    text = if (note.user.host != null) "@${note.user.username}@${note.user.host}"
-                    else "@${note.user.username}",
-                    color = Color.Gray,
-                    fontSize = 14.sp
+                NoteItem(
+                    note = note.renote!!,
+                    emojiMap = emojiMap,
+                    updateEmojis = updateEmojis,
                 )
-                if (!note.text.isNullOrEmpty()) {
-                    Spacer(modifier = Modifier.height(2.dp))
+            }
+        } else {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(12.dp)
+            ) {
+                AsyncImage(
+                    model = note.user.avatarUrl,
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .size(48.dp)
+                        .clip(CircleShape)
+                )
+                Spacer(modifier = Modifier.width(12.dp))
+                Column {
                     EmojiText(
-                        text = note.text ?: "",
+                        text = note.user.name ?: note.user.username,
                         emojiMap = emojiMap,
                         updateEmojis = updateEmojis,
-                        externalEmojiMap = note.emojis,
+                        externalEmojiMap = note.user.emojis,
+                        fontWeight = FontWeight.Bold,
                         fontSize = 16.sp
                     )
-                }
-                if (note.files.isNotEmpty()) {
                     Spacer(modifier = Modifier.height(2.dp))
-                    ImageGrid(
-                        files = note.files,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 4.dp),
+                    Text(
+                        text = if (note.user.host != null) "@${note.user.username}@${note.user.host}"
+                        else "@${note.user.username}",
+                        color = Color.Gray,
+                        fontSize = 14.sp
                     )
-                }
-                if (note.reactions.isNotEmpty()) {
-                    Spacer(modifier = Modifier.height(4.dp))
-                    EmojiReactions(
-                        reactions = note.reactions,
-                        onClick = {},
-                        emojiMap = emojiMap,
-                        updateEmojis = updateEmojis,
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                        externalEmojiMap = note.reactionEmojis,
-                    )
+                    if (!note.text.isNullOrEmpty()) {
+                        Spacer(modifier = Modifier.height(2.dp))
+                        EmojiText(
+                            text = note.text ?: "",
+                            emojiMap = emojiMap,
+                            updateEmojis = updateEmojis,
+                            externalEmojiMap = note.emojis,
+                            fontSize = 16.sp
+                        )
+                    }
+                    if (note.files.isNotEmpty()) {
+                        Spacer(modifier = Modifier.height(2.dp))
+                        ImageGrid(
+                            files = note.files,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 4.dp),
+                        )
+                    }
+                    if (note.reactions.isNotEmpty()) {
+                        Spacer(modifier = Modifier.height(4.dp))
+                        EmojiReactions(
+                            reactions = note.reactions,
+                            onClick = {},
+                            emojiMap = emojiMap,
+                            updateEmojis = updateEmojis,
+                            modifier = Modifier
+                                .fillMaxWidth(),
+                            externalEmojiMap = note.reactionEmojis,
+                        )
+                    }
                 }
             }
         }
