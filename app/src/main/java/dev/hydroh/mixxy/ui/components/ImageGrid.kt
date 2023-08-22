@@ -40,7 +40,10 @@ fun ImageGrid(
 ) {
     val gridId = remember { UUID.randomUUID().toString() }
     val previewerState =
-        rememberPreviewerState(enableVerticalDrag = true) { index ->
+        rememberPreviewerState(
+            enableVerticalDrag = true,
+            pageCount = { files.count() }
+        ) { index ->
             gridId + index.toString()
         }
     val scope = rememberCoroutineScope()
@@ -189,7 +192,6 @@ fun ImageGrid(
                     .background(Color.Transparent)
             ) {
                 ImagePreviewer(
-                    count = files.count(),
                     state = previewerState,
                     imageLoader = { index ->
                         val request = ImageRequest.Builder(LocalContext.current)

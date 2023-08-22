@@ -39,7 +39,7 @@ fun TimelineScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
-    val pagerState = rememberPagerState()
+    val pagerState = rememberPagerState { viewModel.tabs.count() }
     val coroutineScope = rememberCoroutineScope()
 
     Column(modifier = Modifier.fillMaxWidth()) {
@@ -63,7 +63,6 @@ fun TimelineScreen(
             }
         }
         HorizontalPager(
-            pageCount = viewModel.tabs.count(),
             state = pagerState,
         )
         { page ->

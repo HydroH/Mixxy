@@ -26,7 +26,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.paging.compose.LazyPagingItems
-import androidx.paging.compose.items
 import coil.compose.AsyncImage
 import dev.hydroh.misskey.client.entity.Note
 import dev.hydroh.mixxy.data.local.model.EmojiData
@@ -144,10 +143,10 @@ fun NoteItemList(
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         items(
-            items = notes,
-            key = { note -> note.id }
-        ) {
-            it?.let {
+            count = notes.itemCount,
+            key = { index -> notes[index]?.id ?: "" },
+        ) { index ->
+            notes[index]?.let {
                 NoteItem(
                     note = it,
                     emojiMap = emojiMap,
