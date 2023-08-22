@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dev.hydroh.misskey.client.entity.Note
 import dev.hydroh.mixxy.data.InstanceRepository
 import dev.hydroh.mixxy.data.NotesRepository
 import dev.hydroh.mixxy.ui.components.LoadingState
@@ -45,6 +46,45 @@ class TimelineViewModel @Inject constructor(
         val timeline: Timeline,
         val title: String,
     )
+
+    fun createReaction(note: Note, reaction: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            notesRepository.createReaction(note.id, reaction)
+            val oldReaction = note.myReaction
+            val newNote = note.copy(
+                myReaction = reaction,
+                reactions = note.reactions.toMutableMap().apply {
+                    if (oldReaction != null && oldReaction in this) {
+                        this[oldReaction] = this[oldReaction]!! - 1
+                    }
+                    this[reaction] = (this[reaction] ?: 0) + 1
+                }
+            )
+            homeTimeline.update(newNote)
+            localTimeline.update(newNote)
+            hybridTimeline.update(newNote)
+            globalTimeline.update(newNote)
+        }
+    }
+
+    fun deleteReaction(note: Note) {
+        viewModelScope.launch(Dispatchers.IO) {
+            notesRepository.deleteReaction(note.id)
+            val oldReaction = note.myReaction
+            val newNote = note.copy(
+                myReaction = null,
+                reactions = note.reactions.toMutableMap().apply {
+                    if (oldReaction != null && oldReaction in this) {
+                        this[oldReaction] = this[oldReaction]!! - 1
+                    }
+                }
+            )
+            homeTimeline.update(newNote)
+            localTimeline.update(newNote)
+            hybridTimeline.update(newNote)
+            globalTimeline.update(newNote)
+        }
+    }
 
     fun getEmojiMap() = instanceRepository.emojiMap
 

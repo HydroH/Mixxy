@@ -10,6 +10,8 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -20,12 +22,19 @@ import dev.hydroh.mixxy.data.local.model.EmojiData
 @Composable
 fun EmojiReactions(
     reactions: Map<String, Int>,
-    onClick: (String) -> Unit,
+    myReaction: String?,
+    onCreateReaction: (String) -> Unit,
+    onDeleteReaction: () -> Unit,
     emojiMap: SnapshotStateMap<String, EmojiData>,
     updateEmojis: (List<String>) -> Unit,
     modifier: Modifier = Modifier,
     externalEmojiMap: Map<String, String>? = null,
 ) {
+    var isLoading = rememberSaveable { false }
+    LaunchedEffect(reactions) {
+        isLoading = false
+    }
+
     FlowRow(
         modifier = modifier,
         horizontalArrangement = Arrangement.spacedBy(4.dp),
@@ -33,12 +42,21 @@ fun EmojiReactions(
     ) {
         reactions.toList().sortedByDescending { (_, v) -> v }.forEach { (emoji, count) ->
             Button(
-                onClick = { onClick(emoji) },
+                onClick = {
+                    if (isLoading) return@Button
+                    if (emoji == myReaction) {
+                        isLoading = true
+                        onDeleteReaction()
+                    } else {
+                        isLoading = true
+                        onCreateReaction(emoji.replace("@.", ""))
+                    }
+                },
                 enabled = emoji.contains("@.") || !emoji.contains(":"),
                 shape = RoundedCornerShape(8.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceVariant,
-                    contentColor = MaterialTheme.colorScheme.onSurface,
+                    containerColor = if (emoji == myReaction) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant,
+                    contentColor = if (emoji == myReaction) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface,
                     disabledContainerColor = Color.Transparent,
                     disabledContentColor = MaterialTheme.colorScheme.onSurface,
                 ),

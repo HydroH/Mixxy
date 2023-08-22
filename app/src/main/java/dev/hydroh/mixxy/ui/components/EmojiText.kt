@@ -57,7 +57,7 @@ fun LocalEmojiText(
     updateEmojis: (List<String>) -> Unit,
     modifier: Modifier = Modifier,
     fontSize: TextUnit = TextUnit.Unspecified,
-    fontWeight: FontWeight? = null
+    fontWeight: FontWeight? = null,
 ) {
     val emojiAnnotatedString = remember {
         EmojiAnnotatedString(text)

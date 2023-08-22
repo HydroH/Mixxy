@@ -89,4 +89,15 @@ class NotesReq {
         val sinceDate: Int? = null,
         val untilDate: Int? = null,
     ) : Authable()
+
+    @Serializable
+    data class CreateReaction(
+        val noteId: String,
+        val reaction: String,
+    ) : Authable()
+
+    @Serializable
+    data class DeleteReaction(
+        val noteId: String,
+    ) : Authable()
 }

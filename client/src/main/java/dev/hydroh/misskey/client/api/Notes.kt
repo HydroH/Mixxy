@@ -42,4 +42,10 @@ class Notes internal constructor(private val client: MisskeyHttpClient) {
 
     suspend fun featured(req: NotesReq.Page): ArrayList<Note> =
         client.request("notes/featured", req)
+
+    suspend fun createReaction(req: NotesReq.CreateReaction): Unit =
+        client.request("notes/reactions/create", req)
+
+    suspend fun deleteReaction(req: NotesReq.DeleteReaction): Unit =
+        client.request("notes/reactions/delete", req)
 }

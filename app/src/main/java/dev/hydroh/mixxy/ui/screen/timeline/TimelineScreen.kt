@@ -85,6 +85,8 @@ fun TimelineScreen(
             ) {
                 NoteItemList(
                     notes = pagingItems,
+                    onCreateReaction = viewModel::createReaction,
+                    onDeleteReaction = viewModel::deleteReaction,
                     emojiMap = viewModel.getEmojiMap(),
                     updateEmojis = viewModel::updateEmojis,
                     modifier = Modifier.fillMaxWidth(),

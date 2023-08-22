@@ -33,6 +33,8 @@ import dev.hydroh.mixxy.data.local.model.EmojiData
 @Composable
 fun NoteItem(
     note: Note,
+    onCreateReaction: (String) -> Unit,
+    onDeleteReaction: () -> Unit,
     emojiMap: SnapshotStateMap<String, EmojiData>,
     updateEmojis: (List<String>) -> Unit,
     modifier: Modifier = Modifier,
@@ -58,6 +60,8 @@ fun NoteItem(
                 )
                 NoteItem(
                     note = note.renote!!,
+                    onCreateReaction = onCreateReaction,
+                    onDeleteReaction = onDeleteReaction,
                     emojiMap = emojiMap,
                     updateEmojis = updateEmojis,
                 )
@@ -68,6 +72,7 @@ fun NoteItem(
                     .fillMaxWidth()
                     .padding(12.dp)
             ) {
+                // Avatar
                 AsyncImage(
                     model = note.user.avatarUrl,
                     contentDescription = null,
@@ -78,6 +83,7 @@ fun NoteItem(
                 )
                 Spacer(modifier = Modifier.width(12.dp))
                 Column {
+                    // Username
                     EmojiText(
                         text = note.user.name ?: note.user.username,
                         emojiMap = emojiMap,
@@ -86,6 +92,8 @@ fun NoteItem(
                         fontWeight = FontWeight.Bold,
                         fontSize = 16.sp
                     )
+
+                    // UserHandle
                     Spacer(modifier = Modifier.height(2.dp))
                     Text(
                         text = if (note.user.host != null) "@${note.user.username}@${note.user.host}"
@@ -93,6 +101,8 @@ fun NoteItem(
                         color = Color.Gray,
                         fontSize = 14.sp
                     )
+
+                    // Text
                     if (!note.text.isNullOrEmpty()) {
                         Spacer(modifier = Modifier.height(2.dp))
                         EmojiText(
@@ -103,6 +113,8 @@ fun NoteItem(
                             fontSize = 16.sp
                         )
                     }
+
+                    // Images
                     if (note.files.isNotEmpty()) {
                         Spacer(modifier = Modifier.height(2.dp))
                         ImageGrid(
@@ -112,17 +124,27 @@ fun NoteItem(
                                 .padding(vertical = 4.dp),
                         )
                     }
+
+                    // Reactions
                     if (note.reactions.isNotEmpty()) {
                         Spacer(modifier = Modifier.height(4.dp))
                         EmojiReactions(
                             reactions = note.reactions,
-                            onClick = {},
+                            myReaction = note.myReaction,
+                            onCreateReaction = onCreateReaction,
+                            onDeleteReaction = onDeleteReaction,
                             emojiMap = emojiMap,
                             updateEmojis = updateEmojis,
                             modifier = Modifier
                                 .fillMaxWidth(),
                             externalEmojiMap = note.reactionEmojis,
                         )
+                    }
+
+                    // Buttons
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Row {
+                        // TODO
                     }
                 }
             }
@@ -133,6 +155,8 @@ fun NoteItem(
 @Composable
 fun NoteItemList(
     notes: LazyPagingItems<Note>,
+    onCreateReaction: (Note, String) -> Unit,
+    onDeleteReaction: (Note) -> Unit,
     emojiMap: SnapshotStateMap<String, EmojiData>,
     updateEmojis: (List<String>) -> Unit,
     modifier: Modifier = Modifier,
@@ -149,6 +173,12 @@ fun NoteItemList(
             notes[index]?.let {
                 NoteItem(
                     note = it,
+                    onCreateReaction = { reaction ->
+                        onCreateReaction(it, reaction)
+                    },
+                    onDeleteReaction = {
+                        onDeleteReaction(it)
+                    },
                     emojiMap = emojiMap,
                     updateEmojis = updateEmojis,
                     modifier = Modifier
