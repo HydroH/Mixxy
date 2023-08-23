@@ -24,16 +24,16 @@ class TimelineViewModel @Inject constructor(
     val uiState = _uiState.asStateFlow()
 
     val homeTimeline = notesRepository.pagingFlow(Timeline.HOME)
-        .cachedIn(viewModelScope).cachedPager { it.id }
+        .cachedIn(viewModelScope).cachedPager()
 
     val localTimeline = notesRepository.pagingFlow(Timeline.LOCAL)
-        .cachedIn(viewModelScope).cachedPager { it.id }
+        .cachedIn(viewModelScope).cachedPager()
 
     val hybridTimeline = notesRepository.pagingFlow(Timeline.HYBRID)
-        .cachedIn(viewModelScope).cachedPager { it.id }
+        .cachedIn(viewModelScope).cachedPager()
 
     val globalTimeline = notesRepository.pagingFlow(Timeline.GLOBAL)
-        .cachedIn(viewModelScope).cachedPager { it.id }
+        .cachedIn(viewModelScope).cachedPager()
 
     val tabs = listOf(
         TabInfo(timeline = Timeline.HOME, title = "Home"),
