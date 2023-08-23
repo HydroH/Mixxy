@@ -33,8 +33,8 @@ import dev.hydroh.mixxy.data.local.model.EmojiData
 @Composable
 fun NoteItem(
     note: Note,
-    onCreateReaction: (String) -> Unit,
-    onDeleteReaction: () -> Unit,
+    onCreateReaction: (Note, String) -> Unit,
+    onDeleteReaction: (Note) -> Unit,
     emojiMap: SnapshotStateMap<String, EmojiData>,
     updateEmojis: (List<String>) -> Unit,
     modifier: Modifier = Modifier,
@@ -60,8 +60,12 @@ fun NoteItem(
                 )
                 NoteItem(
                     note = note.renote!!,
-                    onCreateReaction = onCreateReaction,
-                    onDeleteReaction = onDeleteReaction,
+                    onCreateReaction = { _, reaction ->
+                        onCreateReaction(note.renote!!, reaction)
+                    },
+                    onDeleteReaction = {
+                        onDeleteReaction(note.renote!!)
+                    },
                     emojiMap = emojiMap,
                     updateEmojis = updateEmojis,
                 )
@@ -131,8 +135,12 @@ fun NoteItem(
                         EmojiReactions(
                             reactions = note.reactions,
                             myReaction = note.myReaction,
-                            onCreateReaction = onCreateReaction,
-                            onDeleteReaction = onDeleteReaction,
+                            onCreateReaction = { reaction ->
+                                onCreateReaction(note, reaction)
+                            },
+                            onDeleteReaction = {
+                                onDeleteReaction(note)
+                            },
                             emojiMap = emojiMap,
                             updateEmojis = updateEmojis,
                             modifier = Modifier
@@ -173,12 +181,8 @@ fun NoteItemList(
             notes[index]?.let {
                 NoteItem(
                     note = it,
-                    onCreateReaction = { reaction ->
-                        onCreateReaction(it, reaction)
-                    },
-                    onDeleteReaction = {
-                        onDeleteReaction(it)
-                    },
+                    onCreateReaction = onCreateReaction,
+                    onDeleteReaction = onDeleteReaction,
                     emojiMap = emojiMap,
                     updateEmojis = updateEmojis,
                     modifier = Modifier

@@ -11,6 +11,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.key
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.ui.Modifier
@@ -40,40 +41,42 @@ fun EmojiReactions(
         horizontalArrangement = Arrangement.spacedBy(4.dp),
         verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
-        reactions.toList().sortedByDescending { (_, v) -> v }.forEach { (emoji, count) ->
-            Button(
-                onClick = {
-                    if (isLoading) return@Button
-                    if (emoji == myReaction) {
-                        isLoading = true
-                        onDeleteReaction()
+        reactions.toList().sortedByDescending { (_, v) -> v }.map { (emoji, count) ->
+            key(emoji, count) {
+                Button(
+                    onClick = {
+                        if (isLoading) return@Button
+                        if (emoji == myReaction) {
+                            isLoading = true
+                            onDeleteReaction()
+                        } else {
+                            isLoading = true
+                            onCreateReaction(emoji)
+                        }
+                    },
+                    enabled = emoji.contains("@.") || !emoji.contains(":"),
+                    shape = RoundedCornerShape(8.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = if (emoji == myReaction) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant,
+                        contentColor = if (emoji == myReaction) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface,
+                        disabledContainerColor = Color.Transparent,
+                        disabledContentColor = MaterialTheme.colorScheme.onSurface,
+                    ),
+                    contentPadding = PaddingValues(0.dp),
+                    modifier = Modifier.requiredHeight(32.dp)
+                ) {
+                    if (emoji.contains("@.")) {
+                        LocalEmojiText(
+                            text = "${emoji.replace("@.", "")} $count",
+                            emojiMap = emojiMap,
+                            updateEmojis = updateEmojis,
+                        )
                     } else {
-                        isLoading = true
-                        onCreateReaction(emoji.replace("@.", ""))
+                        ExternalEmojiText(
+                            text = "$emoji $count",
+                            externalEmojiMap = externalEmojiMap ?: mapOf(),
+                        )
                     }
-                },
-                enabled = emoji.contains("@.") || !emoji.contains(":"),
-                shape = RoundedCornerShape(8.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = if (emoji == myReaction) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant,
-                    contentColor = if (emoji == myReaction) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface,
-                    disabledContainerColor = Color.Transparent,
-                    disabledContentColor = MaterialTheme.colorScheme.onSurface,
-                ),
-                contentPadding = PaddingValues(0.dp),
-                modifier = Modifier.requiredHeight(32.dp)
-            ) {
-                if (emoji.contains("@.")) {
-                    LocalEmojiText(
-                        text = "${emoji.replace("@.", "")} $count",
-                        emojiMap = emojiMap,
-                        updateEmojis = updateEmojis,
-                    )
-                } else {
-                    ExternalEmojiText(
-                        text = "$emoji $count",
-                        externalEmojiMap = externalEmojiMap ?: mapOf(),
-                    )
                 }
             }
         }
