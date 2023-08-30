@@ -8,16 +8,16 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.ModalBottomSheetLayout
-import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
-import androidx.compose.material.rememberModalBottomSheetState
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -34,7 +34,11 @@ import dev.hydroh.mixxy.ui.components.NoteItemList
 import dev.hydroh.mixxy.util.pagerTabIndicatorOffset
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterialApi::class)
+@OptIn(
+    ExperimentalFoundationApi::class,
+    ExperimentalMaterialApi::class,
+    ExperimentalMaterial3Api::class
+)
 @Destination
 @Composable
 fun TimelineScreen(
@@ -43,88 +47,94 @@ fun TimelineScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
-    val sheetState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
+    val sheetState = rememberModalBottomSheetState()
     val pagerState = rememberPagerState { viewModel.tabs.count() }
     val coroutineScope = rememberCoroutineScope()
 
-    ModalBottomSheetLayout(
-        sheetState = sheetState,
-        sheetContent = {
+    Column(modifier = Modifier.fillMaxWidth()) {
+        TabRow(
+            selectedTabIndex = pagerState.currentPage,
+            indicator = { tabPositions ->
+                TabRowDefaults.Indicator(
+                    Modifier.pagerTabIndicatorOffset(pagerState, tabPositions)
+                )
+            },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            viewModel.tabs.forEachIndexed { index, tab ->
+                Tab(
+                    selected = pagerState.currentPage == index,
+                    onClick = {
+                        coroutineScope.launch { pagerState.animateScrollToPage(index) }
+                    },
+                    text = { Text(tab.title) },
+                )
+            }
+        }
+        HorizontalPager(
+            state = pagerState,
+        )
+        { page ->
+            val timeline = when (viewModel.tabs[page].timeline) {
+                Timeline.HOME -> viewModel.homeTimeline
+                Timeline.LOCAL -> viewModel.localTimeline
+                Timeline.HYBRID -> viewModel.hybridTimeline
+                Timeline.GLOBAL -> viewModel.globalTimeline
+            }
+            val pagingItems = timeline.pager.collectAsLazyPagingItems()
+            val pullRefreshState = rememberPullRefreshState(
+                refreshing = pagingItems.loadState.refresh is LoadState.Loading,
+                onRefresh = {
+                    pagingItems.refresh()
+                    timeline.invalidate()
+                })
+
+            Box(
+                modifier = Modifier
+                    .pullRefresh(pullRefreshState)
+                    .fillMaxSize()
+            ) {
+                NoteItemList(
+                    notes = pagingItems,
+                    onCreateReaction = viewModel::createReaction,
+                    onDeleteReaction = viewModel::deleteReaction,
+                    onClickReactionButton = {
+                        viewModel.updateRespondingNote(it)
+                        coroutineScope.launch {
+                            viewModel.showBottomSheet()
+                            sheetState.show()
+                        }
+                    },
+                    emojiMap = viewModel.getEmojiMap(),
+                    updateEmojis = viewModel::updateEmojis,
+                    modifier = Modifier.fillMaxWidth(),
+                )
+                PullRefreshIndicator(
+                    refreshing = pagingItems.loadState.refresh is LoadState.Loading,
+                    state = pullRefreshState,
+                    modifier = Modifier.align(Alignment.TopCenter)
+                )
+            }
+        }
+    }
+
+    if (uiState.showBottomSheet) {
+        ModalBottomSheet(onDismissRequest = {
+            viewModel.hideBottomSheet()
+        }) {
             EmojiSelectionGrid(
                 emojis = viewModel.getEmojiMap(),
                 onEmojiSelected = { emoji ->
                     coroutineScope.launch {
                         sheetState.hide()
+                    }.invokeOnCompletion {
+                        if (!sheetState.isVisible) {
+                            viewModel.hideBottomSheet()
+                        }
                     }
                     viewModel.createReaction(uiState.respondingNote!!, emoji)
                 }
             )
-        }
-    ) {
-        Column(modifier = Modifier.fillMaxWidth()) {
-            TabRow(
-                selectedTabIndex = pagerState.currentPage,
-                indicator = { tabPositions ->
-                    TabRowDefaults.Indicator(
-                        Modifier.pagerTabIndicatorOffset(pagerState, tabPositions)
-                    )
-                },
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                viewModel.tabs.forEachIndexed { index, tab ->
-                    Tab(
-                        selected = pagerState.currentPage == index,
-                        onClick = {
-                            coroutineScope.launch { pagerState.animateScrollToPage(index) }
-                        },
-                        text = { Text(tab.title) },
-                    )
-                }
-            }
-            HorizontalPager(
-                state = pagerState,
-            )
-            { page ->
-                val timeline = when (viewModel.tabs[page].timeline) {
-                    Timeline.HOME -> viewModel.homeTimeline
-                    Timeline.LOCAL -> viewModel.localTimeline
-                    Timeline.HYBRID -> viewModel.hybridTimeline
-                    Timeline.GLOBAL -> viewModel.globalTimeline
-                }
-                val pagingItems = timeline.pager.collectAsLazyPagingItems()
-                val pullRefreshState = rememberPullRefreshState(
-                    refreshing = pagingItems.loadState.refresh is LoadState.Loading,
-                    onRefresh = {
-                        pagingItems.refresh()
-                        timeline.invalidate()
-                    })
-
-                Box(
-                    modifier = Modifier
-                        .pullRefresh(pullRefreshState)
-                        .fillMaxSize()
-                ) {
-                    NoteItemList(
-                        notes = pagingItems,
-                        onCreateReaction = viewModel::createReaction,
-                        onDeleteReaction = viewModel::deleteReaction,
-                        onClickReactionButton = {
-                            viewModel.updateRespondingNote(it)
-                            coroutineScope.launch {
-                                sheetState.show()
-                            }
-                        },
-                        emojiMap = viewModel.getEmojiMap(),
-                        updateEmojis = viewModel::updateEmojis,
-                        modifier = Modifier.fillMaxWidth(),
-                    )
-                    PullRefreshIndicator(
-                        refreshing = pagingItems.loadState.refresh is LoadState.Loading,
-                        state = pullRefreshState,
-                        modifier = Modifier.align(Alignment.TopCenter)
-                    )
-                }
-            }
         }
     }
 
