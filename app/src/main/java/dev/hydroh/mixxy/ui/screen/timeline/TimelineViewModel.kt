@@ -12,6 +12,7 @@ import dev.hydroh.mixxy.util.cachedPager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -93,9 +94,14 @@ class TimelineViewModel @Inject constructor(
             instanceRepository.updateEmojis(emojis)
         }
     }
+
+    fun updateRespondingNote(note: Note) {
+        _uiState.update { it.copy(respondingNote = note) }
+    }
 }
 
 data class NotesUIState(
+    val respondingNote: Note? = null,
     val loadingState: LoadingState = LoadingState.INIT,
     val errorMessage: String? = null,
 )

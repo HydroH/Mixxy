@@ -74,7 +74,7 @@ fun ImageGrid(
             VerticalGrid(
                 columns = 2,
                 itemCount = files.count(),
-                contentPadding = contentPadding,
+                spacing = contentPadding,
                 modifier = modifier.fillMaxSize(),
                 aspectRatio = if (files.count() == 2) 0.75f else 1.5f,
             ) { index ->
@@ -159,7 +159,7 @@ fun ImageGrid(
             VerticalGrid(
                 columns = 3,
                 itemCount = files.count(),
-                contentPadding = contentPadding,
+                spacing = contentPadding,
                 modifier = modifier.fillMaxSize(),
                 aspectRatio = 1f,
             ) { index ->

@@ -19,7 +19,7 @@ fun VerticalGrid(
     columns: Int,
     itemCount: Int,
     modifier: Modifier = Modifier,
-    contentPadding: Dp = 0.dp,
+    spacing: Dp = 0.dp,
     aspectRatio: Float = 1f,
     content: @Composable (Int) -> Unit
 ) {
@@ -46,14 +46,14 @@ fun VerticalGrid(
                     }
                     if (columnId < columns - 1) {
                         Spacer(modifier = Modifier
-                            .width(contentPadding)
+                            .width(spacing)
                             .fillMaxHeight())
                     }
                 }
             }
             if (rowId < rows - 1) {
                 Spacer(modifier = Modifier
-                    .height(contentPadding)
+                    .height(spacing)
                     .fillMaxWidth())
             }
         }

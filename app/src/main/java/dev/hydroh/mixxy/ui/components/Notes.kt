@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
@@ -35,6 +36,7 @@ fun NoteItem(
     note: Note,
     onCreateReaction: (Note, String) -> Unit,
     onDeleteReaction: (Note) -> Unit,
+    onClickReactionButton: (Note) -> Unit,
     emojiMap: SnapshotStateMap<String, EmojiData>,
     updateEmojis: (List<String>) -> Unit,
     modifier: Modifier = Modifier,
@@ -63,9 +65,8 @@ fun NoteItem(
                     onCreateReaction = { _, reaction ->
                         onCreateReaction(note.renote!!, reaction)
                     },
-                    onDeleteReaction = {
-                        onDeleteReaction(note.renote!!)
-                    },
+                    onDeleteReaction = { onDeleteReaction(note.renote!!) },
+                    onClickReactionButton = { onClickReactionButton(note.renote!!) },
                     emojiMap = emojiMap,
                     updateEmojis = updateEmojis,
                 )
@@ -152,7 +153,9 @@ fun NoteItem(
                     // Buttons
                     Spacer(modifier = Modifier.height(4.dp))
                     Row {
-                        // TODO
+                        Button(onClick = { onClickReactionButton(note) }) {
+                            Text(text = "回应")
+                        }
                     }
                 }
             }
@@ -165,6 +168,7 @@ fun NoteItemList(
     notes: LazyPagingItems<Note>,
     onCreateReaction: (Note, String) -> Unit,
     onDeleteReaction: (Note) -> Unit,
+    onClickReactionButton: (Note) -> Unit,
     emojiMap: SnapshotStateMap<String, EmojiData>,
     updateEmojis: (List<String>) -> Unit,
     modifier: Modifier = Modifier,
@@ -183,6 +187,7 @@ fun NoteItemList(
                     note = it,
                     onCreateReaction = onCreateReaction,
                     onDeleteReaction = onDeleteReaction,
+                    onClickReactionButton = onClickReactionButton,
                     emojiMap = emojiMap,
                     updateEmojis = updateEmojis,
                     modifier = Modifier
