@@ -26,7 +26,7 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.navigation.popUpTo
 import com.ramcosta.composedestinations.result.NavResult
 import com.ramcosta.composedestinations.result.ResultRecipient
-import dev.hydroh.mixxy.ui.components.LoadingState
+import dev.hydroh.mixxy.ui.enums.LoadingState
 import dev.hydroh.mixxy.ui.screen.destinations.LoginScreenDestination
 import dev.hydroh.mixxy.ui.screen.destinations.RedirectScreenDestination
 import dev.hydroh.mixxy.ui.screen.destinations.TimelineScreenDestination

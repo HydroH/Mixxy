@@ -7,7 +7,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.hydroh.misskey.client.entity.Note
 import dev.hydroh.mixxy.data.InstanceRepository
 import dev.hydroh.mixxy.data.NotesRepository
-import dev.hydroh.mixxy.ui.components.LoadingState
+import dev.hydroh.mixxy.ui.enums.LoadingState
+import dev.hydroh.mixxy.ui.enums.RespondType
 import dev.hydroh.mixxy.util.cachedPager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -49,15 +50,14 @@ class TimelineViewModel @Inject constructor(
     )
 
     fun createReaction(note: Note, reaction: String) {
+        if (note.myReaction != null) {
+            deleteReaction(note)
+        }
         viewModelScope.launch(Dispatchers.IO) {
             notesRepository.createReaction(note.id, reaction)
-            val oldReaction = note.myReaction
             val newNote = note.copy(
                 myReaction = reaction,
                 reactions = note.reactions.toMutableMap().apply {
-                    if (oldReaction != null && oldReaction in this) {
-                        this[oldReaction] = this[oldReaction]!! - 1
-                    }
                     this[reaction] = (this[reaction] ?: 0) + 1
                 }
             )
@@ -111,6 +111,8 @@ class TimelineViewModel @Inject constructor(
 data class NotesUIState(
     val showBottomSheet: Boolean = false,
     val respondingNote: Note? = null,
+    val respondType: RespondType = RespondType.COMMENT,
+    val commentText: String = "",
     val loadingState: LoadingState = LoadingState.INIT,
     val errorMessage: String? = null,
 )

@@ -1,4 +1,4 @@
-package dev.hydroh.mixxy.ui.components
+package dev.hydroh.mixxy.ui.enums
 
 
 enum class LoadingState {

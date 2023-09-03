@@ -23,7 +23,8 @@ fun EmojiSelectionGrid(
     modifier: Modifier = Modifier,
 ) {
     LazyColumn(modifier = modifier) {
-        emojis.values.sortedBy { it.name }
+        emojis.values.asSequence()
+            .sortedBy { it.name }
             .groupBy { it.category }
             .toList()
             .sortedBy { it.first }
@@ -44,6 +45,6 @@ fun EmojiSelectionGrid(
                         }
                     }
                 }
-            }
+            }.toList()
     }
 }

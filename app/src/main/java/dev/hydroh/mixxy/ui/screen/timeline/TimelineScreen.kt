@@ -1,16 +1,11 @@
 package dev.hydroh.mixxy.ui.screen.timeline
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.pullrefresh.PullRefreshIndicator
-import androidx.compose.material.pullrefresh.pullRefresh
-import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Tab
@@ -22,11 +17,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import dev.hydroh.mixxy.ui.components.EmojiSelectionGrid
@@ -36,7 +32,6 @@ import kotlinx.coroutines.launch
 
 @OptIn(
     ExperimentalFoundationApi::class,
-    ExperimentalMaterialApi::class,
     ExperimentalMaterial3Api::class
 )
 @Destination
@@ -55,7 +50,7 @@ fun TimelineScreen(
         TabRow(
             selectedTabIndex = pagerState.currentPage,
             indicator = { tabPositions ->
-                TabRowDefaults.Indicator(
+                TabRowDefaults.PrimaryIndicator(
                     Modifier.pagerTabIndicatorOffset(pagerState, tabPositions)
                 )
             },
@@ -82,18 +77,14 @@ fun TimelineScreen(
                 Timeline.GLOBAL -> viewModel.globalTimeline
             }
             val pagingItems = timeline.pager.collectAsLazyPagingItems()
-            val pullRefreshState = rememberPullRefreshState(
-                refreshing = pagingItems.loadState.refresh is LoadState.Loading,
+
+            SwipeRefresh(
+                state = rememberSwipeRefreshState(isRefreshing = pagingItems.loadState.refresh is LoadState.Loading),
                 onRefresh = {
                     pagingItems.refresh()
                     timeline.invalidate()
                 })
-
-            Box(
-                modifier = Modifier
-                    .pullRefresh(pullRefreshState)
-                    .fillMaxSize()
-            ) {
+            {
                 NoteItemList(
                     notes = pagingItems,
                     onCreateReaction = viewModel::createReaction,
@@ -107,12 +98,7 @@ fun TimelineScreen(
                     },
                     emojiMap = viewModel.getEmojiMap(),
                     updateEmojis = viewModel::updateEmojis,
-                    modifier = Modifier.fillMaxWidth(),
-                )
-                PullRefreshIndicator(
-                    refreshing = pagingItems.loadState.refresh is LoadState.Loading,
-                    state = pullRefreshState,
-                    modifier = Modifier.align(Alignment.TopCenter)
+                    modifier = Modifier.fillMaxSize(),
                 )
             }
         }

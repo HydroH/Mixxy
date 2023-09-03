@@ -76,8 +76,7 @@ dependencies {
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
-    implementation("androidx.compose.material3:material3")
-    implementation("androidx.compose.material:material")
+    implementation("androidx.compose.material3:material3:1.2.0-alpha06")
 
     implementation("androidx.paging:paging-runtime:3.2.0")
     implementation("androidx.paging:paging-compose:3.2.0")
@@ -93,6 +92,9 @@ dependencies {
     implementation("io.coil-kt:coil:2.4.0")
     implementation("io.coil-kt:coil-compose:2.4.0")
     implementation("io.coil-kt:coil-gif:2.4.0")
+
+    implementation("com.google.accompanist:accompanist-swiperefresh:0.32.0")
+    implementation("com.google.accompanist:accompanist-placeholder-material:0.32.0")
     implementation("com.github.jvziyaoyao:ImageViewer:1.0.2-alpha.5")
 
     implementation("io.github.raamcosta.compose-destinations:core:1.9.51")
