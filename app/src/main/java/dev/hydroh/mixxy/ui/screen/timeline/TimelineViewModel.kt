@@ -8,7 +8,6 @@ import dev.hydroh.misskey.client.entity.Note
 import dev.hydroh.mixxy.data.InstanceRepository
 import dev.hydroh.mixxy.data.NotesRepository
 import dev.hydroh.mixxy.ui.enums.LoadingState
-import dev.hydroh.mixxy.ui.enums.RespondType
 import dev.hydroh.mixxy.util.cachedPager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -95,24 +94,13 @@ class TimelineViewModel @Inject constructor(
         }
     }
 
-    fun showBottomSheet() {
-        _uiState.update { it.copy(showBottomSheet = true) }
-    }
-
-    fun hideBottomSheet() {
-        _uiState.update { it.copy(showBottomSheet = false) }
-    }
-
-    fun updateRespondingNote(note: Note) {
-        _uiState.update { it.copy(respondingNote = note) }
+    fun updateRespondUIState(respondUIState: RespondUIState?) {
+        _uiState.update { it.copy(respondUIState = respondUIState) }
     }
 }
 
 data class NotesUIState(
-    val showBottomSheet: Boolean = false,
-    val respondingNote: Note? = null,
-    val respondType: RespondType = RespondType.COMMENT,
-    val commentText: String = "",
+    val respondUIState: RespondUIState? = null,
     val loadingState: LoadingState = LoadingState.INIT,
     val errorMessage: String? = null,
 )
@@ -122,4 +110,10 @@ enum class Timeline {
     LOCAL,
     HYBRID,
     GLOBAL,
+}
+
+sealed class RespondUIState {
+    class Reply(val text: String) : RespondUIState()
+    class Renote(val note: Note) : RespondUIState()
+    class Reaction(val note: Note) : RespondUIState()
 }

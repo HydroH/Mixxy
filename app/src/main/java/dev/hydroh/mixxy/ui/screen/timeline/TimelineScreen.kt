@@ -90,9 +90,8 @@ fun TimelineScreen(
                     onCreateReaction = viewModel::createReaction,
                     onDeleteReaction = viewModel::deleteReaction,
                     onClickReactionButton = {
-                        viewModel.updateRespondingNote(it)
+                        viewModel.updateRespondUIState(RespondUIState.Reaction(it))
                         coroutineScope.launch {
-                            viewModel.showBottomSheet()
                             sheetState.show()
                         }
                     },
@@ -104,23 +103,31 @@ fun TimelineScreen(
         }
     }
 
-    if (uiState.showBottomSheet) {
-        ModalBottomSheet(onDismissRequest = {
-            viewModel.hideBottomSheet()
-        }) {
-            EmojiSelectionGrid(
-                emojis = viewModel.getEmojiMap(),
-                onEmojiSelected = { emoji ->
-                    coroutineScope.launch {
-                        sheetState.hide()
-                    }.invokeOnCompletion {
-                        if (!sheetState.isVisible) {
-                            viewModel.hideBottomSheet()
+    uiState.respondUIState?.let { respondUIState ->
+        when (respondUIState) {
+            is RespondUIState.Reaction -> {
+                ModalBottomSheet(onDismissRequest = {
+                    viewModel.updateRespondUIState(null)
+                }) {
+                    EmojiSelectionGrid(
+                        emojis = viewModel.getEmojiMap(),
+                        onEmojiSelected = { emoji ->
+                            coroutineScope.launch {
+                                sheetState.hide()
+                            }.invokeOnCompletion {
+                                if (!sheetState.isVisible) {
+                                    viewModel.updateRespondUIState(null)
+                                }
+                            }
+                            viewModel.createReaction(respondUIState.note, emoji)
                         }
-                    }
-                    viewModel.createReaction(uiState.respondingNote!!, emoji)
+                    )
                 }
-            )
+            }
+
+            is RespondUIState.Renote -> TODO()
+            is RespondUIState.Reply -> TODO()
         }
     }
+
 }
