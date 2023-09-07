@@ -30,6 +30,7 @@ import dev.hydroh.mixxy.ui.components.NoteItemList
 import dev.hydroh.mixxy.util.pagerTabIndicatorOffset
 import kotlinx.coroutines.launch
 
+@Suppress("DEPRECATION")
 @OptIn(
     ExperimentalFoundationApi::class,
     ExperimentalMaterial3Api::class
@@ -68,8 +69,7 @@ fun TimelineScreen(
         }
         HorizontalPager(
             state = pagerState,
-        )
-        { page ->
+        ) { page ->
             val timeline = when (viewModel.tabs[page].timeline) {
                 Timeline.HOME -> viewModel.homeTimeline
                 Timeline.LOCAL -> viewModel.localTimeline
@@ -83,8 +83,8 @@ fun TimelineScreen(
                 onRefresh = {
                     pagingItems.refresh()
                     timeline.invalidate()
-                })
-            {
+                }
+            ) {
                 NoteItemList(
                     notes = pagingItems,
                     onCreateReaction = viewModel::createReaction,
@@ -123,5 +123,4 @@ fun TimelineScreen(
             )
         }
     }
-
 }

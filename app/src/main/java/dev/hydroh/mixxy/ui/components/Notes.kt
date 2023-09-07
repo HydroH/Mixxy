@@ -101,8 +101,11 @@ fun NoteItem(
                     // UserHandle
                     Spacer(modifier = Modifier.height(2.dp))
                     Text(
-                        text = if (note.user.host != null) "@${note.user.username}@${note.user.host}"
-                        else "@${note.user.username}",
+                        text = if (note.user.host != null) {
+                            "@${note.user.username}@${note.user.host}"
+                        } else {
+                            "@${note.user.username}"
+                        },
                         color = Color.Gray,
                         fontSize = 14.sp
                     )
