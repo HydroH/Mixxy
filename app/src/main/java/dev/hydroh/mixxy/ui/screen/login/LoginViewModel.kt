@@ -29,6 +29,12 @@ class LoginViewModel @Inject constructor(
         }
     }
 
+    fun updateIsWaitingAuth(isWaitingAuth: Boolean) {
+        _uiState.update {
+            it.copy(isWaitingAuth = isWaitingAuth)
+        }
+    }
+
     fun tryAuth() {
         _uiState.update {
             it.copy(loadingState = LoadingState.LOADING)
@@ -37,8 +43,11 @@ class LoginViewModel @Inject constructor(
             _uiState.update {
                 it.copy(
                     loadingState =
-                    if (accountRepository.newAccount()) LoadingState.SUCCESS
-                    else LoadingState.FAIL
+                    if (accountRepository.newAccount()) {
+                        LoadingState.SUCCESS
+                    } else {
+                        LoadingState.FAIL
+                    }
                 )
             }
         }
@@ -47,6 +56,7 @@ class LoginViewModel @Inject constructor(
 
 data class LoginUIState(
     val host: String = "",
+    val isWaitingAuth: Boolean = false,
     val loadingState: LoadingState = LoadingState.INIT,
     val errorMessage: String? = null,
 )
