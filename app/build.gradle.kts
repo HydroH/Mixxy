@@ -57,8 +57,8 @@ dependencies {
     implementation(project(mapOf("path" to ":client")))
     implementation("io.ktor:ktor-client-android:2.3.2")
 
-    implementation("androidx.core:core-ktx:1.10.1")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.1")
+    implementation("androidx.core:core-ktx:1.12.0")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
     implementation("androidx.activity:activity-compose:1.7.2")
     implementation("androidx.datastore:datastore-preferences:1.0.0")
     implementation("androidx.browser:browser:1.6.0")
@@ -72,14 +72,14 @@ dependencies {
     implementation("androidx.room:room-ktx:2.5.2")
     implementation("androidx.room:room-paging:2.5.2")
 
-    implementation(platform("androidx.compose:compose-bom:2023.08.00"))
+    implementation(platform("androidx.compose:compose-bom:2023.09.00"))
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
-    implementation("androidx.compose.material3:material3:1.2.0-alpha06")
+    implementation("androidx.compose.material3:material3:1.2.0-alpha07")
 
-    implementation("androidx.paging:paging-runtime:3.2.0")
-    implementation("androidx.paging:paging-compose:3.2.0")
+    implementation("androidx.paging:paging-runtime:3.2.1")
+    implementation("androidx.paging:paging-compose:3.2.1")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
@@ -97,8 +97,8 @@ dependencies {
     implementation("com.google.accompanist:accompanist-placeholder-material:0.32.0")
     implementation("com.github.jvziyaoyao:ImageViewer:1.0.2-alpha.5")
 
-    implementation("io.github.raamcosta.compose-destinations:core:1.9.51")
-    ksp("io.github.raamcosta.compose-destinations:ksp:1.9.51")
+    implementation("io.github.raamcosta.compose-destinations:core:1.9.53")
+    ksp("io.github.raamcosta.compose-destinations:ksp:1.9.53")
 }
 
 kapt {

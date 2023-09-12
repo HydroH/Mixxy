@@ -2,7 +2,6 @@ package dev.hydroh.mixxy.ui.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -10,11 +9,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -23,12 +22,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.paging.compose.LazyPagingItems
 import coil.compose.AsyncImage
 import dev.hydroh.misskey.client.entity.Note
+import dev.hydroh.mixxy.R
 import dev.hydroh.mixxy.data.local.model.EmojiData
 
 @Composable
@@ -36,6 +36,8 @@ fun NoteItem(
     note: Note,
     onCreateReaction: (Note, String) -> Unit,
     onDeleteReaction: (Note) -> Unit,
+    onClickReplyButton: (Note) -> Unit,
+    onClickRenoteButton: (Note) -> Unit,
     onClickReactionButton: (Note) -> Unit,
     emojiMap: SnapshotStateMap<String, EmojiData>,
     updateEmojis: (List<String>) -> Unit,
@@ -66,6 +68,8 @@ fun NoteItem(
                         onCreateReaction(note.renote!!, reaction)
                     },
                     onDeleteReaction = { onDeleteReaction(note.renote!!) },
+                    onClickReplyButton = { onClickReplyButton(note.renote!!) },
+                    onClickRenoteButton = { onClickRenoteButton(note.renote!!) },
                     onClickReactionButton = { onClickReactionButton(note.renote!!) },
                     emojiMap = emojiMap,
                     updateEmojis = updateEmojis,
@@ -155,9 +159,34 @@ fun NoteItem(
 
                     // Buttons
                     Spacer(modifier = Modifier.height(4.dp))
-                    Row {
-                        Button(onClick = { onClickReactionButton(note) }) {
-                            Text(text = "回应")
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        IconButton(onClick = { onClickReplyButton(note) }) {
+                            Row {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.reply_20px),
+                                    contentDescription = null,
+                                )
+                                if (note.repliesCount > 0) {
+                                    Text(" ${note.repliesCount}")
+                                }
+                            }
+                        }
+                        IconButton(onClick = { onClickRenoteButton(note) }) {
+                            Row {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.repeat_20px),
+                                    contentDescription = null,
+                                )
+                                if (note.renoteCount > 0) {
+                                    Text(" ${note.renoteCount}")
+                                }
+                            }
+                        }
+                        IconButton(onClick = { onClickReactionButton(note) }) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.add_20px),
+                                contentDescription = null,
+                            )
                         }
                     }
                 }
@@ -166,37 +195,3 @@ fun NoteItem(
     }
 }
 
-@Composable
-fun NoteItemList(
-    notes: LazyPagingItems<Note>,
-    onCreateReaction: (Note, String) -> Unit,
-    onDeleteReaction: (Note) -> Unit,
-    onClickReactionButton: (Note) -> Unit,
-    emojiMap: SnapshotStateMap<String, EmojiData>,
-    updateEmojis: (List<String>) -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    LazyColumn(
-        modifier = modifier.fillMaxWidth(),
-        contentPadding = PaddingValues(16.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        items(
-            count = notes.itemCount,
-            key = { index -> notes[index]?.id ?: "" },
-        ) { index ->
-            notes[index]?.let {
-                NoteItem(
-                    note = it,
-                    onCreateReaction = onCreateReaction,
-                    onDeleteReaction = onDeleteReaction,
-                    onClickReactionButton = onClickReactionButton,
-                    emojiMap = emojiMap,
-                    updateEmojis = updateEmojis,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                )
-            }
-        }
-    }
-}

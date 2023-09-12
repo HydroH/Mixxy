@@ -1,9 +1,12 @@
 package dev.hydroh.mixxy.ui.screen.timeline
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -18,6 +21,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -26,7 +30,7 @@ import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import dev.hydroh.mixxy.ui.components.EmojiSelectionGrid
-import dev.hydroh.mixxy.ui.components.NoteItemList
+import dev.hydroh.mixxy.ui.components.NoteItem
 import dev.hydroh.mixxy.util.pagerTabIndicatorOffset
 import kotlinx.coroutines.launch
 
@@ -85,20 +89,38 @@ fun TimelineScreen(
                     timeline.invalidate()
                 }
             ) {
-                NoteItemList(
-                    notes = pagingItems,
-                    onCreateReaction = viewModel::createReaction,
-                    onDeleteReaction = viewModel::deleteReaction,
-                    onClickReactionButton = {
-                        viewModel.updateRespondUIState(RespondUIState.Reaction(it))
-                        coroutineScope.launch {
-                            sheetState.show()
-                        }
-                    },
-                    emojiMap = viewModel.getEmojiMap(),
-                    updateEmojis = viewModel::updateEmojis,
+                LazyColumn(
                     modifier = Modifier.fillMaxSize(),
-                )
+                    contentPadding = PaddingValues(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    items(
+                        count = pagingItems.itemCount,
+                        key = { index -> pagingItems[index]?.id ?: "" },
+                    ) { index ->
+                        pagingItems[index]?.let {
+                            NoteItem(
+                                note = it,
+                                onCreateReaction = viewModel::createReaction,
+                                onDeleteReaction = viewModel::deleteReaction,
+                                onClickReplyButton = {
+                                    viewModel.updateRespondUIState(RespondUIState.Reply("@${it.user.username} "))
+                                    coroutineScope.launch { sheetState.show() }
+                                },
+                                onClickRenoteButton = {
+                                    viewModel.updateRespondUIState(RespondUIState.Renote(it))
+                                    coroutineScope.launch { sheetState.show() }
+                                },
+                                onClickReactionButton = {
+                                    viewModel.updateRespondUIState(RespondUIState.Reaction(it))
+                                    coroutineScope.launch { sheetState.show() }
+                                },
+                                emojiMap = viewModel.getEmojiMap(),
+                                updateEmojis = viewModel::updateEmojis,
+                            )
+                        }
+                    }
+                }
             }
         }
     }
