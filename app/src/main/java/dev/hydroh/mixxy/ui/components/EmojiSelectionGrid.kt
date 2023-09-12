@@ -1,11 +1,14 @@
 package dev.hydroh.mixxy.ui.components
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.snapshots.SnapshotStateMap
@@ -22,29 +25,31 @@ fun EmojiSelectionGrid(
     onEmojiSelected: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    LazyColumn(modifier = modifier) {
+    LazyVerticalGrid(
+        columns = GridCells.Adaptive(80.dp),
+        horizontalArrangement = Arrangement.SpaceEvenly,
+        modifier = modifier,
+    ) {
         emojis.values.asSequence()
             .sortedBy { it.name }
             .groupBy { it.category }
             .toList()
             .sortedBy { it.first }
             .map { (category, emojis) ->
-                item {
-                    Text(text = category ?: "未分组") // TODO: Expandable
-                    FlowRow {
-                        emojis.forEach { emoji ->
-                            AsyncImage(
-                                model = emoji.url,
-                                contentDescription = null,
-                                contentScale = ContentScale.FillHeight,
-                                modifier = Modifier
-                                    .clickable { onEmojiSelected(":${emoji.name}@.:") }
-                                    .height(40.dp)
-                                    .padding(4.dp)
-                            )
-                        }
-                    }
+                item(span = { GridItemSpan(maxLineSpan) }) {
+                    Text(text = category ?: "未分组")
                 }
-            }.toList()
+                items(emojis) { emoji ->
+                    AsyncImage(
+                        model = emoji.url,
+                        contentDescription = null,
+                        contentScale = ContentScale.Inside,
+                        modifier = Modifier
+                            .size(72.dp)
+                            .clickable { onEmojiSelected(":${emoji.name}@.:") }
+                            .padding(4.dp)
+                    )
+                }
+            }
     }
 }
