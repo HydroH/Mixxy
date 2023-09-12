@@ -1,54 +1,84 @@
 package dev.hydroh.mixxy.ui.components
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.GridItemSpan
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import dev.hydroh.mixxy.data.local.model.EmojiData
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun EmojiSelectionGrid(
     emojis: SnapshotStateMap<String, EmojiData>,
     onEmojiSelected: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    LazyVerticalGrid(
-        columns = GridCells.Adaptive(80.dp),
-        horizontalArrangement = Arrangement.SpaceEvenly,
-        modifier = modifier,
-    ) {
+    var expandedColumn by remember { mutableStateOf(null as String?) }
+    LazyColumn(modifier = modifier) {
         emojis.values.asSequence()
             .sortedBy { it.name }
             .groupBy { it.category }
             .toList()
             .sortedBy { it.first }
             .map { (category, emojis) ->
-                item(span = { GridItemSpan(maxLineSpan) }) {
-                    Text(text = category ?: "未分组")
-                }
-                items(emojis) { emoji ->
-                    AsyncImage(
-                        model = emoji.url,
-                        contentDescription = null,
-                        contentScale = ContentScale.Inside,
+                item {
+                    val rotationState by animateFloatAsState(if (expandedColumn == category) 180f else 0f)
+                    Row(
+                        horizontalArrangement = Arrangement.SpaceBetween,
                         modifier = Modifier
-                            .size(72.dp)
-                            .clickable { onEmojiSelected(":${emoji.name}@.:") }
-                            .padding(4.dp)
-                    )
+                            .fillMaxWidth()
+                            .clickable {
+                                expandedColumn = category
+                            }
+                            .padding(horizontal = 8.dp, vertical = 6.dp)) {
+                        Text(text = category ?: "未分组")
+                        Icon(
+                            imageVector = Icons.Default.ArrowDropDown,
+                            contentDescription = null,
+                            modifier = Modifier.rotate(rotationState)
+                        )
+                    }
+                    AnimatedVisibility(
+                        visible = expandedColumn == category,
+                        enter = expandVertically(),
+                        exit = shrinkVertically(),
+                    ) {
+                        VerticalGrid(
+                            columns = 5,
+                            itemCount = emojis.count(),
+                            spacing = 8.dp,
+                        ) { index ->
+                            AsyncImage(
+                                model = emojis[index].url,
+                                contentDescription = null,
+                                contentScale = ContentScale.Inside,
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .clickable { onEmojiSelected(":${emojis[index].name}@.:") }
+                            )
+                        }
+                    }
                 }
             }
     }
