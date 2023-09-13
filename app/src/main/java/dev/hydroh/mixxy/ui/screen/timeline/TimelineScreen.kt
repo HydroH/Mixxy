@@ -1,15 +1,19 @@
 package dev.hydroh.mixxy.ui.screen.timeline
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
@@ -21,6 +25,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.LoadState
@@ -91,8 +96,7 @@ fun TimelineScreen(
             ) {
                 LazyColumn(
                     modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                    contentPadding = PaddingValues(12.dp),
                 ) {
                     items(
                         count = pagingItems.itemCount,
@@ -117,7 +121,19 @@ fun TimelineScreen(
                                 },
                                 emojiMap = viewModel.getEmojiMap(),
                                 updateEmojis = viewModel::updateEmojis,
+                                modifier = when (index) {
+                                    0 ->
+                                        Modifier.clip(RoundedCornerShape(12.dp, 12.dp, 0.dp, 0.dp))
+
+                                    pagingItems.itemCount ->
+                                        Modifier.clip(RoundedCornerShape(0.dp, 0.dp, 12.dp, 12.dp))
+
+                                    else -> Modifier
+                                }
+                                    .background(MaterialTheme.colorScheme.surface)
+                                    .padding(16.dp)
                             )
+                            HorizontalDivider()
                         }
                     }
                 }
@@ -151,5 +167,4 @@ fun TimelineScreen(
             is RespondUIState.Reply -> TODO()
         }
     }
-
 }

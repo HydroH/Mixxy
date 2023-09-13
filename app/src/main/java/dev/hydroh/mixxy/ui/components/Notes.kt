@@ -1,6 +1,7 @@
 package dev.hydroh.mixxy.ui.components
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -10,11 +11,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.snapshots.SnapshotStateMap
@@ -43,14 +41,11 @@ fun NoteItem(
     updateEmojis: (List<String>) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Card(
+    Box(
         modifier = modifier,
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface,
-            contentColor = MaterialTheme.colorScheme.onSurface,
-        ),
     ) {
         if (note.text.isNullOrEmpty() && note.renote != null) {
+            // Renote
             Column(
                 modifier = Modifier.fillMaxWidth()
             ) {
@@ -60,8 +55,8 @@ fun NoteItem(
                     updateEmojis = updateEmojis,
                     externalEmojiMap = note.user.emojis,
                     fontSize = 14.sp,
-                    modifier = Modifier.padding(16.dp, 12.dp, 0.dp, 0.dp)
                 )
+                Spacer(modifier = Modifier.height(12.dp))
                 NoteItem(
                     note = note.renote!!,
                     onCreateReaction = { _, reaction ->
@@ -79,7 +74,6 @@ fun NoteItem(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(12.dp)
             ) {
                 // Avatar
                 AsyncImage(
@@ -194,4 +188,3 @@ fun NoteItem(
         }
     }
 }
-
