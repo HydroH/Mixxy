@@ -57,8 +57,8 @@ fun EmojiReactions(
                     enabled = emoji.contains("@.") || !emoji.contains(":"),
                     shape = RoundedCornerShape(8.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = if (emoji == myReaction) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant,
-                        contentColor = if (emoji == myReaction) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface,
+                        containerColor = if (emoji == myReaction) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.primaryContainer,
+                        contentColor = if (emoji == myReaction) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onPrimaryContainer,
                         disabledContainerColor = Color.Transparent,
                         disabledContentColor = MaterialTheme.colorScheme.onSurface,
                     ),
