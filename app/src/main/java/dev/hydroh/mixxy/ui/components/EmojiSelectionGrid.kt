@@ -49,9 +49,10 @@ fun EmojiSelectionGrid(
                         modifier = Modifier
                             .fillMaxWidth()
                             .clickable {
-                                expandedColumn = category
+                                expandedColumn = if (expandedColumn == category) null else category
                             }
-                            .padding(horizontal = 8.dp, vertical = 6.dp)) {
+                            .padding(horizontal = 8.dp, vertical = 6.dp)
+                    ) {
                         Text(text = category ?: "未分组")
                         Icon(
                             painter = painterResource(id = R.drawable.expand_more_20px),
