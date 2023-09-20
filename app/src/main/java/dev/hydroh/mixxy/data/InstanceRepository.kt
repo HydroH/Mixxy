@@ -4,7 +4,6 @@ import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.snapshots.SnapshotStateMap
 import dev.hydroh.mixxy.data.local.dao.EmojiDao
 import dev.hydroh.mixxy.data.local.model.EmojiData
-import dev.hydroh.mixxy.data.remote.MisskeyDataSource
 import javax.inject.Inject
 import javax.inject.Singleton
 

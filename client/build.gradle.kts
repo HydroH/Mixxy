@@ -10,7 +10,7 @@ java {
 }
 
 dependencies {
-    api("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
+    api("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
     api("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
 
     val ktor_version = "2.3.2"

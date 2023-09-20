@@ -163,7 +163,16 @@ fun TimelineScreen(
                 }
             }
 
-            is RespondUIState.Renote -> TODO()
+            is RespondUIState.Renote -> {
+                ModalBottomSheet(onDismissRequest = {
+                    viewModel.updateRespondUIState(null)
+                }) {
+                    Column {
+                        Text(text = "转发")
+                        Text(text = "引用")
+                    }
+                }
+            }
             is RespondUIState.Reply -> TODO()
         }
     }

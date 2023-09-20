@@ -3,7 +3,6 @@ package dev.hydroh.mixxy.data
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import dev.hydroh.misskey.client.entity.request.NotesReq
-import dev.hydroh.mixxy.data.remote.MisskeyDataSource
 import dev.hydroh.mixxy.data.remote.NotesPagingSource
 import dev.hydroh.mixxy.ui.screen.timeline.Timeline
 import javax.inject.Inject
