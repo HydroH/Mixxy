@@ -1,11 +1,12 @@
 package dev.hydroh.mixxy.ui.screen.splash
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.hydroh.mixxy.data.AccountRepository
 import dev.hydroh.mixxy.data.InstanceRepository
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -15,8 +16,10 @@ class SplashViewModel @Inject constructor(
     private val instanceRepository: InstanceRepository,
 ) : ViewModel() {
     suspend fun loadAccount() = accountRepository.loadAccount()
+
+    @OptIn(DelicateCoroutinesApi::class)
     fun fetchEmojis() {
-        viewModelScope.launch(Dispatchers.IO) {
+        GlobalScope.launch(Dispatchers.IO) {
             instanceRepository.fetchEmojis()
         }
     }

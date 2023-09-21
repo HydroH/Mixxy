@@ -9,8 +9,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import dev.hydroh.mixxy.data.local.dao.AccountInfoDao
 import dev.hydroh.mixxy.data.local.dao.EmojiDao
-import dev.hydroh.mixxy.data.local.db.AccountInfoDatabase
-import dev.hydroh.mixxy.data.local.db.EmojiDatabase
+import dev.hydroh.mixxy.data.local.db.AppDatabase
 import javax.inject.Singleton
 
 @InstallIn(SingletonComponent::class)
@@ -18,25 +17,18 @@ import javax.inject.Singleton
 class DatabaseModule {
     @Provides
     @Singleton
-    fun provideAccountInfoDatabase(@ApplicationContext ctx: Context): AccountInfoDatabase {
-        return Room.databaseBuilder(ctx, AccountInfoDatabase::class.java, "account_info")
+    fun provideAppDatabase(@ApplicationContext ctx: Context): AppDatabase {
+        return Room.databaseBuilder(ctx, AppDatabase::class.java, "app")
             .build()
     }
 
     @Provides
-    fun provideAccountInfoDao(accountInfoDatabase: AccountInfoDatabase): AccountInfoDao {
-        return accountInfoDatabase.accountInfoDao()
+    fun provideAccountInfoDao(appDatabase: AppDatabase): AccountInfoDao {
+        return appDatabase.accountInfoDao()
     }
 
     @Provides
-    @Singleton
-    fun provideEmojiDatabase(@ApplicationContext ctx: Context): EmojiDatabase {
-        return Room.databaseBuilder(ctx, EmojiDatabase::class.java, "emoji_data")
-            .build()
-    }
-
-    @Provides
-    fun provideEmojiDao(emojiDatabase: EmojiDatabase): EmojiDao {
-        return emojiDatabase.emojiDao()
+    fun provideEmojiDao(appDatabase: AppDatabase): EmojiDao {
+        return appDatabase.emojiDao()
     }
 }

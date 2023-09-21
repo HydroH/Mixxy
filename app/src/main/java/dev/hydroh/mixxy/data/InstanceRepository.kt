@@ -16,18 +16,18 @@ class InstanceRepository @Inject constructor(
     private val emojiDao: EmojiDao,
 ) {
     fun getEmojis() =
-        emojiDao.getEmojis().map { it.associateBy { it.name }.toImmutableMap() }
+        emojiDao.getEmojis().map { it.associateBy { emoji -> emoji.name }.toImmutableMap() }
 
     suspend fun fetchEmojis() =
         instanceService.emojis().map {
             emojiDao.insertEmojis(
-                it.emojis.map {
+                it.emojis.map { emoji ->
                     EmojiData(
-                        name = it.name,
+                        name = emoji.name,
                         host = hostSelectionInterceptor.host!!,
-                        url = it.url,
-                        category = it.category,
-                        aliases = it.aliases?.joinToString(",") ?: ""
+                        url = emoji.url,
+                        category = emoji.category,
+                        aliases = emoji.aliases?.joinToString(",") ?: ""
                     )
                 }
             )

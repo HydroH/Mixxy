@@ -13,7 +13,7 @@ interface EmojiDao {
     suspend fun insertEmojis(emojis: List<EmojiData>)
 
     @Query(
-        "SELECT * FROM emoji_data " +
+        "SELECT emoji_data.* FROM emoji_data " +
             "INNER JOIN account_info ON emoji_data.host = account_info.host " +
             "WHERE account_info.active = 1"
     )
