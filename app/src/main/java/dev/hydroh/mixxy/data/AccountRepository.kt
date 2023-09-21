@@ -3,8 +3,8 @@ package dev.hydroh.mixxy.data
 import dev.hydroh.mixxy.data.local.dao.AccountInfoDao
 import dev.hydroh.mixxy.data.local.model.AccountInfo
 import dev.hydroh.mixxy.data.remote.AccountService
-import dev.hydroh.mixxy.data.remote.ContextualTokenSerializer
-import dev.hydroh.mixxy.data.remote.HostSelectionInterceptor
+import dev.hydroh.mixxy.data.remote.adapter.ContextualTokenSerializer
+import dev.hydroh.mixxy.data.remote.adapter.HostSelectionInterceptor
 import dev.hydroh.mixxy.data.remote.model.request.AccountReq
 import okhttp3.HttpUrl
 import java.util.UUID

@@ -1,4 +1,4 @@
-package dev.hydroh.mixxy.data.remote
+package dev.hydroh.mixxy.data.remote.adapter
 
 import okhttp3.Interceptor
 import okhttp3.Response

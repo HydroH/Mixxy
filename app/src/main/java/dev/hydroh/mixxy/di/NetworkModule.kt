@@ -7,10 +7,10 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import dev.hydroh.mixxy.data.remote.ContextualTokenSerializer
-import dev.hydroh.mixxy.data.remote.HostSelectionInterceptor
 import dev.hydroh.mixxy.data.remote.InstanceService
 import dev.hydroh.mixxy.data.remote.NotesService
+import dev.hydroh.mixxy.data.remote.adapter.ContextualTokenSerializer
+import dev.hydroh.mixxy.data.remote.adapter.HostSelectionInterceptor
 import dev.hydroh.mixxy.data.remote.model.request.Token
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json

@@ -1,4 +1,4 @@
-package dev.hydroh.mixxy.data.remote
+package dev.hydroh.mixxy.data.remote.adapter
 
 import dev.hydroh.mixxy.data.remote.model.request.Token
 import kotlinx.serialization.KSerializer
