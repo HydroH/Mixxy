@@ -5,15 +5,17 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import dev.hydroh.mixxy.data.local.model.EmojiData
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface EmojiDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertEmojis(emojis: List<EmojiData>)
 
-    @Query("SELECT * FROM emoji_data WHERE host = :host")
-    suspend fun getEmojis(host: String): List<EmojiData>
-
-    @Query("SELECT * FROM emoji_data WHERE host = :host AND name IN (:names)")
-    suspend fun getEmojis(host: String, names: List<String>): List<EmojiData>
+    @Query(
+        "SELECT * FROM emoji_data " +
+            "INNER JOIN account_info ON emoji_data.host = account_info.host " +
+            "WHERE account_info.active = 1"
+    )
+    fun getEmojis(): Flow<List<EmojiData>>
 }

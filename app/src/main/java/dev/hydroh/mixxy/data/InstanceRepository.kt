@@ -4,37 +4,33 @@ import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.snapshots.SnapshotStateMap
 import dev.hydroh.mixxy.data.local.dao.EmojiDao
 import dev.hydroh.mixxy.data.local.model.EmojiData
+import dev.hydroh.mixxy.data.remote.InstanceService
+import dev.hydroh.mixxy.data.remote.adapter.HostSelectionInterceptor
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class InstanceRepository @Inject constructor(
-    private val misskeyDataSource: MisskeyDataSource,
+    private val hostSelectionInterceptor: HostSelectionInterceptor,
+    private val instanceService: InstanceService,
     private val emojiDao: EmojiDao,
 ) {
     val emojiMap: SnapshotStateMap<String, EmojiData> = mutableStateMapOf()
 
-    suspend fun initEmojis() {
-        val emojis = emojiDao.getEmojis(misskeyDataSource.client!!.host)
-        emojiMap.putAll(emojis.map { Pair(it.name, it) })
-    }
+    fun getEmojis() =
+        emojiDao.getEmojis().map { it.associateBy { it.name } }
 
-    suspend fun updateEmojis(emojis: List<String>) {
-        emojis.forEach { name ->
-            if (!emojiMap.contains(name)) {
-                val newEmojis = misskeyDataSource.client!!.instance.emojis().emojis.map {
-                    EmojiData(
-                        name = it.name,
-                        host = misskeyDataSource.client!!.host,
-                        url = it.url,
-                        category = it.category,
-                        aliases = it.aliases?.joinToString(",") ?: ""
-                    )
-                }
-                emojiDao.insertEmojis(newEmojis)
-                emojiMap.putAll(newEmojis.map { Pair(it.name, it) })
-                return
-            }
+    suspend fun fetchEmojis() =
+        instanceService.emojis().map {
+            emojiDao.insertEmojis(it.emojis.map {
+                EmojiData(
+                    name = it.name,
+                    host = hostSelectionInterceptor.host!!,
+                    url = it.url,
+                    category = it.category,
+                    aliases = it.aliases?.joinToString(",") ?: ""
+                )
+            })
         }
-    }
 }
