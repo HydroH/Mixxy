@@ -1,7 +1,6 @@
 plugins {
     id("com.android.application")
     kotlin("android")
-    kotlin("kapt")
     kotlin("plugin.serialization")
     id("com.google.devtools.ksp")
     id("com.google.dagger.hilt.android")
@@ -63,7 +62,7 @@ dependencies {
     implementation("androidx.browser:browser:1.6.0")
 
     implementation("com.google.dagger:hilt-android:2.48")
-    kapt("com.google.dagger:hilt-compiler:2.48")
+    ksp("com.google.dagger:hilt-compiler:2.48")
     implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
 
     implementation("androidx.room:room-runtime:2.5.2")
@@ -110,8 +109,4 @@ dependencies {
 
     implementation("io.github.raamcosta.compose-destinations:core:1.9.53")
     ksp("io.github.raamcosta.compose-destinations:ksp:1.9.53")
-}
-
-kapt {
-    correctErrorTypes = true
 }
