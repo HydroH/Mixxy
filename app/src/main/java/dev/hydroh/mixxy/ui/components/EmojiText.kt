@@ -6,7 +6,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.Placeholder
@@ -18,12 +17,12 @@ import androidx.core.graphics.drawable.toBitmap
 import coil.compose.AsyncImage
 import dev.hydroh.mixxy.data.local.model.EmojiData
 import dev.hydroh.mixxy.util.EmojiAnnotatedString
+import kotlinx.collections.immutable.ImmutableMap
 
 @Composable
 fun EmojiText(
     text: String,
-    emojiMap: SnapshotStateMap<String, EmojiData>,
-    updateEmojis: (List<String>) -> Unit,
+    emojis: ImmutableMap<String, EmojiData>,
     modifier: Modifier = Modifier,
     externalEmojiMap: Map<String, String>? = null,
     fontSize: TextUnit = TextUnit.Unspecified,
@@ -32,8 +31,7 @@ fun EmojiText(
     if (externalEmojiMap.isNullOrEmpty()) {
         LocalEmojiText(
             text = text,
-            emojiMap = emojiMap,
-            updateEmojis = updateEmojis,
+            emojis = emojis,
             modifier = modifier,
             fontSize = fontSize,
             fontWeight = fontWeight,
@@ -53,8 +51,7 @@ fun EmojiText(
 @Composable
 fun LocalEmojiText(
     text: String,
-    emojiMap: SnapshotStateMap<String, EmojiData>,
-    updateEmojis: (List<String>) -> Unit,
+    emojis: ImmutableMap<String, EmojiData>,
     modifier: Modifier = Modifier,
     fontSize: TextUnit = TextUnit.Unspecified,
     fontWeight: FontWeight? = null,
@@ -69,12 +66,9 @@ fun LocalEmojiText(
         mutableStateMapOf<String, Float>()
     }
 
-    LaunchedEffect(Unit) {
-        updateEmojis(emojiAnnotatedString.emojis)
-    }
-    LaunchedEffect(emojiMap.toMap(), aspectRatioMap.toMap()) {
+    LaunchedEffect(emojis) {
         emojiAnnotatedString.emojis.forEach { emoji ->
-            if (emojiMap.contains(emoji)) {
+            if (emojis.contains(emoji)) {
                 inlineContentMap[emoji] = InlineTextContent(
                     Placeholder(
                         width = 1.2.em * (aspectRatioMap[emoji] ?: 1f),
@@ -83,7 +77,7 @@ fun LocalEmojiText(
                     )
                 ) {
                     AsyncImage(
-                        model = emojiMap[emoji]!!.url,
+                        model = emojis[emoji]!!.url,
                         contentDescription = null,
                         contentScale = ContentScale.Fit,
                         onSuccess = {

@@ -37,6 +37,7 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import dev.hydroh.mixxy.ui.components.EmojiSelectionGrid
 import dev.hydroh.mixxy.ui.components.NoteItem
 import dev.hydroh.mixxy.util.pagerTabIndicatorOffset
+import kotlinx.collections.immutable.persistentMapOf
 import kotlinx.coroutines.launch
 
 @Suppress("DEPRECATION")
@@ -51,6 +52,7 @@ fun TimelineScreen(
     viewModel: TimelineViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val emojisState by viewModel.emojis.collectAsState(persistentMapOf())
 
     val sheetState = rememberModalBottomSheetState()
     val pagerState = rememberPagerState { viewModel.tabs.count() }
@@ -119,8 +121,7 @@ fun TimelineScreen(
                                     viewModel.updateRespondUIState(RespondUIState.Reaction(it))
                                     coroutineScope.launch { sheetState.show() }
                                 },
-                                emojiMap = viewModel.getEmojiMap(),
-                                updateEmojis = viewModel::updateEmojis,
+                                emojis = emojisState,
                                 modifier = when (index) {
                                     0 ->
                                         Modifier.clip(RoundedCornerShape(12.dp, 12.dp, 0.dp, 0.dp))
@@ -148,7 +149,7 @@ fun TimelineScreen(
                     viewModel.updateRespondUIState(null)
                 }) {
                     EmojiSelectionGrid(
-                        emojis = viewModel.getEmojiMap(),
+                        emojis = emojisState,
                         onEmojiSelected = { emoji ->
                             coroutineScope.launch {
                                 sheetState.hide()
@@ -173,6 +174,7 @@ fun TimelineScreen(
                     }
                 }
             }
+
             is RespondUIState.Reply -> TODO()
         }
     }

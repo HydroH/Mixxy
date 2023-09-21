@@ -28,7 +28,7 @@ import coil.request.ImageRequest
 import com.origeek.imageViewer.previewer.ImagePreviewer
 import com.origeek.imageViewer.previewer.TransformImageView
 import com.origeek.imageViewer.previewer.rememberPreviewerState
-import dev.hydroh.misskey.client.entity.DriveFile
+import dev.hydroh.mixxy.data.remote.model.DriveFile
 import kotlinx.coroutines.launch
 import java.util.UUID
 

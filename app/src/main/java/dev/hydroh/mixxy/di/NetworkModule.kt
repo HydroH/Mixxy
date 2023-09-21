@@ -2,11 +2,11 @@ package dev.hydroh.mixxy.di
 
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import com.skydoves.retrofit.adapters.arrow.EitherCallAdapterFactory
-import com.skydoves.retrofit.adapters.paging.PagingCallAdapterFactory
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import dev.hydroh.mixxy.data.remote.AccountService
 import dev.hydroh.mixxy.data.remote.InstanceService
 import dev.hydroh.mixxy.data.remote.NotesService
 import dev.hydroh.mixxy.data.remote.adapter.ContextualTokenSerializer
@@ -47,9 +47,12 @@ class NetworkModule {
             .baseUrl("localhost")
             .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
             .addCallAdapterFactory(EitherCallAdapterFactory.create())
-            .addCallAdapterFactory(PagingCallAdapterFactory.create())
             .build()
     }
+
+    @Provides
+    fun provideAccountService(retrofit: Retrofit): AccountService =
+        retrofit.create(AccountService::class.java)
 
     @Provides
     fun provideInstanceService(retrofit: Retrofit): InstanceService =

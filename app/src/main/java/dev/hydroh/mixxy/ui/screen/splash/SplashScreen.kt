@@ -20,7 +20,7 @@ fun SplashScreen(
 ) {
     LaunchedEffect(Unit) {
         if (viewModel.loadAccount()) {
-            viewModel.loadEmojis()
+            viewModel.fetchEmojis()
             navigator?.navigate(TimelineScreenDestination) {
                 popUpTo(SplashScreenDestination) {
                     inclusive = true

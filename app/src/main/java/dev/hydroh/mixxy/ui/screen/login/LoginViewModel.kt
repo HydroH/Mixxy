@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.hydroh.mixxy.data.AccountRepository
+import dev.hydroh.mixxy.data.InstanceRepository
 import dev.hydroh.mixxy.ui.enums.LoadingState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,13 +16,10 @@ import javax.inject.Inject
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val accountRepository: AccountRepository,
+    private val instanceRepository: InstanceRepository,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(LoginUIState())
     val uiState = _uiState.asStateFlow()
-    val authUrl: String
-        get() {
-            return accountRepository.getAuthUrl(_uiState.value.host)
-        }
 
     fun updateHost(host: String) {
         _uiState.update {
@@ -35,7 +33,9 @@ class LoginViewModel @Inject constructor(
         }
     }
 
-    fun tryAuth() {
+    fun newAuth() = accountRepository.newAuth(_uiState.value.host)
+
+    fun checkAuth() {
         _uiState.update {
             it.copy(loadingState = LoadingState.LOADING)
         }
@@ -50,6 +50,12 @@ class LoginViewModel @Inject constructor(
                     }
                 )
             }
+        }
+    }
+
+    fun fetchEmojis() {
+        viewModelScope.launch(Dispatchers.IO) {
+            instanceRepository.fetchEmojis()
         }
     }
 }

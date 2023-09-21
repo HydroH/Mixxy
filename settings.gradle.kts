@@ -21,4 +21,3 @@ dependencyResolutionManagement {
 
 rootProject.name = "Mixxy"
 include(":app")
-include(":client")

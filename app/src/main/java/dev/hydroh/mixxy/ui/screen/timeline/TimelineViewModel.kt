@@ -4,9 +4,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dev.hydroh.misskey.client.entity.Note
 import dev.hydroh.mixxy.data.InstanceRepository
 import dev.hydroh.mixxy.data.NotesRepository
+import dev.hydroh.mixxy.data.remote.model.Note
 import dev.hydroh.mixxy.ui.enums.LoadingState
 import dev.hydroh.mixxy.util.cachedPager
 import kotlinx.coroutines.Dispatchers
@@ -23,6 +23,8 @@ class TimelineViewModel @Inject constructor(
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(NotesUIState())
     val uiState = _uiState.asStateFlow()
+
+    val emojis = instanceRepository.getEmojis()
 
     val homeTimeline = notesRepository.pagingFlow(Timeline.HOME)
         .cachedIn(viewModelScope).cachedPager()
@@ -83,14 +85,6 @@ class TimelineViewModel @Inject constructor(
             localTimeline.update(newNote)
             hybridTimeline.update(newNote)
             globalTimeline.update(newNote)
-        }
-    }
-
-    fun getEmojiMap() = instanceRepository.emojiMap
-
-    fun updateEmojis(emojis: List<String>) {
-        viewModelScope.launch(Dispatchers.IO) {
-            instanceRepository.updateEmojis(emojis)
         }
     }
 

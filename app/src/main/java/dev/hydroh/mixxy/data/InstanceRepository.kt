@@ -4,6 +4,7 @@ import dev.hydroh.mixxy.data.local.dao.EmojiDao
 import dev.hydroh.mixxy.data.local.model.EmojiData
 import dev.hydroh.mixxy.data.remote.InstanceService
 import dev.hydroh.mixxy.data.remote.adapter.HostSelectionInterceptor
+import kotlinx.collections.immutable.toImmutableMap
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -15,7 +16,7 @@ class InstanceRepository @Inject constructor(
     private val emojiDao: EmojiDao,
 ) {
     fun getEmojis() =
-        emojiDao.getEmojis().map { it.associateBy { it.name } }
+        emojiDao.getEmojis().map { it.associateBy { it.name }.toImmutableMap() }
 
     suspend fun fetchEmojis() =
         instanceService.emojis().map {

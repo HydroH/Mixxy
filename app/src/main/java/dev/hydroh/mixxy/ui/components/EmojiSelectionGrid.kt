@@ -18,7 +18,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.layout.ContentScale
@@ -27,10 +26,11 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import dev.hydroh.mixxy.R
 import dev.hydroh.mixxy.data.local.model.EmojiData
+import kotlinx.collections.immutable.ImmutableMap
 
 @Composable
 fun EmojiSelectionGrid(
-    emojis: SnapshotStateMap<String, EmojiData>,
+    emojis: ImmutableMap<String, EmojiData>,
     onEmojiSelected: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {

@@ -13,11 +13,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.key
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import dev.hydroh.mixxy.data.local.model.EmojiData
+import kotlinx.collections.immutable.ImmutableMap
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -26,8 +26,7 @@ fun EmojiReactions(
     myReaction: String?,
     onCreateReaction: (String) -> Unit,
     onDeleteReaction: () -> Unit,
-    emojiMap: SnapshotStateMap<String, EmojiData>,
-    updateEmojis: (List<String>) -> Unit,
+    emojis: ImmutableMap<String, EmojiData>,
     modifier: Modifier = Modifier,
     externalEmojiMap: Map<String, String>? = null,
 ) {
@@ -68,8 +67,7 @@ fun EmojiReactions(
                     if (emoji.contains("@.")) {
                         LocalEmojiText(
                             text = "${emoji.replace("@.", "")} $count",
-                            emojiMap = emojiMap,
-                            updateEmojis = updateEmojis,
+                            emojis = emojis,
                         )
                     } else {
                         ExternalEmojiText(

@@ -15,7 +15,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -25,9 +24,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
-import dev.hydroh.misskey.client.entity.Note
 import dev.hydroh.mixxy.R
 import dev.hydroh.mixxy.data.local.model.EmojiData
+import dev.hydroh.mixxy.data.remote.model.Note
+import kotlinx.collections.immutable.ImmutableMap
 
 @Composable
 fun NoteItem(
@@ -37,8 +37,7 @@ fun NoteItem(
     onClickReplyButton: (Note) -> Unit,
     onClickRenoteButton: (Note) -> Unit,
     onClickReactionButton: (Note) -> Unit,
-    emojiMap: SnapshotStateMap<String, EmojiData>,
-    updateEmojis: (List<String>) -> Unit,
+    emojis: ImmutableMap<String, EmojiData>,
     modifier: Modifier = Modifier,
 ) {
     Box(
@@ -51,8 +50,7 @@ fun NoteItem(
             ) {
                 EmojiText(
                     text = "由 ${note.user.name ?: note.user.username} 转发",
-                    emojiMap = emojiMap,
-                    updateEmojis = updateEmojis,
+                    emojis = emojis,
                     externalEmojiMap = note.user.emojis,
                     fontSize = 14.sp,
                 )
@@ -66,8 +64,7 @@ fun NoteItem(
                     onClickReplyButton = { onClickReplyButton(note.renote!!) },
                     onClickRenoteButton = { onClickRenoteButton(note.renote!!) },
                     onClickReactionButton = { onClickReactionButton(note.renote!!) },
-                    emojiMap = emojiMap,
-                    updateEmojis = updateEmojis,
+                    emojis = emojis,
                 )
             }
         } else {
@@ -89,8 +86,7 @@ fun NoteItem(
                     // Username
                     EmojiText(
                         text = note.user.name ?: note.user.username,
-                        emojiMap = emojiMap,
-                        updateEmojis = updateEmojis,
+                        emojis = emojis,
                         externalEmojiMap = note.user.emojis,
                         fontWeight = FontWeight.Bold,
                         fontSize = 16.sp
@@ -113,8 +109,7 @@ fun NoteItem(
                         Spacer(modifier = Modifier.height(2.dp))
                         EmojiText(
                             text = note.text ?: "",
-                            emojiMap = emojiMap,
-                            updateEmojis = updateEmojis,
+                            emojis = emojis,
                             externalEmojiMap = note.emojis,
                             fontSize = 16.sp
                         )
@@ -143,8 +138,7 @@ fun NoteItem(
                             onDeleteReaction = {
                                 onDeleteReaction(note)
                             },
-                            emojiMap = emojiMap,
-                            updateEmojis = updateEmojis,
+                            emojis = emojis,
                             modifier = Modifier
                                 .fillMaxWidth(),
                             externalEmojiMap = note.reactionEmojis,

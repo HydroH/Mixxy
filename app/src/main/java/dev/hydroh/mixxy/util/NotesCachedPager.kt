@@ -2,7 +2,7 @@ package dev.hydroh.mixxy.util
 
 import androidx.paging.PagingData
 import androidx.paging.map
-import dev.hydroh.misskey.client.entity.Note
+import dev.hydroh.mixxy.data.remote.model.Note
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine

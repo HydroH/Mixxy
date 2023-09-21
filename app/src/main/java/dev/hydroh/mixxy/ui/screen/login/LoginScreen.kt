@@ -49,7 +49,7 @@ fun LoginScreen(
                 Lifecycle.Event.ON_RESUME -> {
                     if (uiState.isWaitingAuth) {
                         viewModel.updateIsWaitingAuth(false)
-                        viewModel.tryAuth()
+                        viewModel.checkAuth()
                     }
                 }
 
@@ -65,6 +65,7 @@ fun LoginScreen(
 
     LaunchedEffect(uiState.loadingState) {
         if (uiState.loadingState == LoadingState.SUCCESS) {
+            viewModel.fetchEmojis()
             navigator?.navigate(TimelineScreenDestination) {
                 popUpTo(LoginScreenDestination) {
                     inclusive = true
@@ -109,7 +110,7 @@ fun LoginScreen(
                 onClick = {
                     viewModel.updateIsWaitingAuth(true)
                     val intent = CustomTabsIntent.Builder().build()
-                    intent.launchUrl(ctx, Uri.parse(viewModel.authUrl))
+                    intent.launchUrl(ctx, Uri.parse(viewModel.newAuth()))
                 },
                 enabled = uiState.loadingState != LoadingState.LOADING,
                 modifier = Modifier
