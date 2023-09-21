@@ -5,7 +5,6 @@ import dev.hydroh.mixxy.data.local.model.AccountInfo
 import dev.hydroh.mixxy.data.remote.AccountService
 import dev.hydroh.mixxy.data.remote.adapter.ContextualTokenSerializer
 import dev.hydroh.mixxy.data.remote.adapter.HostSelectionInterceptor
-import dev.hydroh.mixxy.data.remote.model.request.AccountReq
 import okhttp3.HttpUrl
 import java.util.UUID
 import javax.inject.Inject
@@ -26,6 +25,7 @@ class AccountRepository @Inject constructor(
 
     fun newAuth(host: String): String {
         sessionId = UUID.randomUUID().toString()
+        hostSelectionInterceptor.host = host
         authUrl = HttpUrl.Builder()
             .scheme("https")
             .host(host)
@@ -38,7 +38,7 @@ class AccountRepository @Inject constructor(
     }
 
     suspend fun newAccount(): Boolean =
-        accountService.check(sessionId, AccountReq.Check()).fold(
+        accountService.check(sessionId).fold(
             { false },
             { auth ->
                 contextualTokenSerializer.token = auth.token

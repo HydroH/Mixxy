@@ -17,6 +17,7 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.SerializersModule
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import javax.inject.Singleton
 
@@ -33,6 +34,9 @@ class NetworkModule {
     ): Retrofit {
         val okHttpClient = OkHttpClient.Builder()
             .addInterceptor(hostSelectionInterceptor)
+            .addInterceptor(HttpLoggingInterceptor().apply {
+                level = HttpLoggingInterceptor.Level.BASIC
+            })
             .build()
         val json = Json {
             encodeDefaults = true
@@ -44,7 +48,7 @@ class NetworkModule {
         }
         return Retrofit.Builder()
             .client(okHttpClient)
-            .baseUrl("localhost")
+            .baseUrl("https://localhost")
             .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
             .addCallAdapterFactory(EitherCallAdapterFactory.create())
             .build()
