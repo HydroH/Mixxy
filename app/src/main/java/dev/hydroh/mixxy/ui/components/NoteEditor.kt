@@ -1,7 +1,7 @@
 package dev.hydroh.mixxy.ui.components
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -26,7 +26,9 @@ fun NoteEditor(
             OutlinedTextField(
                 value = text,
                 onValueChange = { onTextChange(it) },
-                modifier = Modifier.fillMaxSize()
+                minLines = 2,
+                modifier = Modifier
+                    .fillMaxWidth()
             )
         }
     }
