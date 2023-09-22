@@ -1,9 +1,11 @@
 package dev.hydroh.mixxy.ui.screen.timeline
 
+import android.view.Gravity
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -26,7 +28,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
+import androidx.compose.ui.window.DialogWindowProvider
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -35,6 +41,7 @@ import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import dev.hydroh.mixxy.ui.components.EmojiSelectionGrid
+import dev.hydroh.mixxy.ui.components.NoteEditor
 import dev.hydroh.mixxy.ui.components.NoteItem
 import dev.hydroh.mixxy.util.pagerTabIndicatorOffset
 import kotlinx.collections.immutable.persistentMapOf
@@ -175,7 +182,27 @@ fun TimelineScreen(
                 }
             }
 
-            is RespondUIState.Reply -> TODO()
+            is RespondUIState.Reply -> {
+                Dialog(
+                    onDismissRequest = {
+                        viewModel.updateRespondUIState(null)
+                    },
+                    properties = DialogProperties(
+                        dismissOnBackPress = true,
+                        dismissOnClickOutside = true,
+                    ),
+                ) {
+                    (LocalView.current.parent as DialogWindowProvider).window.setGravity(Gravity.TOP)
+                    NoteEditor(
+                        text = respondUIState.text,
+                        onClickSubmit = { /*TODO*/ },
+                        onTextChange = { viewModel.updateRespondUIState(RespondUIState.Reply(it)) },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .fillMaxHeight(0.4f)
+                    )
+                }
+            }
         }
     }
 }

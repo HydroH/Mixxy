@@ -181,7 +181,7 @@ fun ImageGrid(
             onDismissRequest = { scope.launch { previewerState.close() } },
             properties = PopupProperties(
                 focusable = true,
-                dismissOnBackPress = true,
+                dismissOnBackPress = false,
                 dismissOnClickOutside = false,
             ),
         ) {

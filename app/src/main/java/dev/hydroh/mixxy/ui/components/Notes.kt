@@ -1,5 +1,6 @@
 package dev.hydroh.mixxy.ui.components
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,8 +12,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -56,14 +55,14 @@ fun NoteItem(
                 )
                 Spacer(modifier = Modifier.height(12.dp))
                 NoteItem(
-                    note = note.renote!!,
+                    note = note.renote,
                     onCreateReaction = { _, reaction ->
-                        onCreateReaction(note.renote!!, reaction)
+                        onCreateReaction(note.renote, reaction)
                     },
-                    onDeleteReaction = { onDeleteReaction(note.renote!!) },
-                    onClickReplyButton = { onClickReplyButton(note.renote!!) },
-                    onClickRenoteButton = { onClickRenoteButton(note.renote!!) },
-                    onClickReactionButton = { onClickReactionButton(note.renote!!) },
+                    onDeleteReaction = { onDeleteReaction(note.renote) },
+                    onClickReplyButton = { onClickReplyButton(note.renote) },
+                    onClickRenoteButton = { onClickRenoteButton(note.renote) },
+                    onClickReactionButton = { onClickReactionButton(note.renote) },
                     emojis = emojis,
                 )
             }
@@ -108,7 +107,7 @@ fun NoteItem(
                     if (!note.text.isNullOrEmpty()) {
                         Spacer(modifier = Modifier.height(2.dp))
                         EmojiText(
-                            text = note.text ?: "",
+                            text = note.text,
                             emojis = emojis,
                             externalEmojiMap = note.emojis,
                             fontSize = 16.sp
@@ -147,35 +146,26 @@ fun NoteItem(
 
                     // Buttons
                     Spacer(modifier = Modifier.height(4.dp))
-                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        IconButton(onClick = { onClickReplyButton(note) }) {
-                            Row {
-                                Icon(
-                                    painter = painterResource(id = R.drawable.reply_20px),
-                                    contentDescription = null,
-                                )
-                                if (note.repliesCount > 0) {
-                                    Text(" ${note.repliesCount}")
-                                }
-                            }
-                        }
-                        IconButton(onClick = { onClickRenoteButton(note) }) {
-                            Row {
-                                Icon(
-                                    painter = painterResource(id = R.drawable.repeat_20px),
-                                    contentDescription = null,
-                                )
-                                if (note.renoteCount > 0) {
-                                    Text(" ${note.renoteCount}")
-                                }
-                            }
-                        }
-                        IconButton(onClick = { onClickReactionButton(note) }) {
-                            Icon(
-                                painter = painterResource(id = R.drawable.add_20px),
-                                contentDescription = null,
-                            )
-                        }
+                    Row(
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        LeadingIconText(
+                            painter = painterResource(id = R.drawable.reply_20px),
+                            text = if (note.repliesCount > 0) " ${note.repliesCount}" else "",
+                            modifier = Modifier.clickable { onClickReplyButton(note) },
+                        )
+                        LeadingIconText(
+                            painter = painterResource(id = R.drawable.repeat_20px),
+                            text = if (note.renoteCount > 0) " ${note.renoteCount}" else "",
+                            modifier = Modifier.clickable { onClickRenoteButton(note) }
+                        )
+                        LeadingIconText(
+                            painter = painterResource(id = R.drawable.add_20px),
+                            text = "",
+                            modifier = Modifier.clickable { onClickReactionButton(note) }
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
                     }
                 }
             }
