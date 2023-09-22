@@ -26,4 +26,7 @@ class NotesRepository @Inject constructor(
 
     suspend fun deleteReaction(noteId: String) =
         notesService.deleteReaction(NotesReq.DeleteReaction(noteId))
+
+    suspend fun createNote(text: String?, replyId: String? = null, renoteId: String? = null) =
+        notesService.create(NotesReq.Create(text = text, replyId = replyId, renoteId = renoteId))
 }

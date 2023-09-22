@@ -3,6 +3,7 @@ package dev.hydroh.mixxy.ui.screen.timeline
 import android.view.Gravity
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -119,15 +120,15 @@ fun TimelineScreen(
                                 onCreateReaction = viewModel::createReaction,
                                 onDeleteReaction = viewModel::deleteReaction,
                                 onClickReplyButton = {
-                                    viewModel.updateRespondUIState(RespondUIState.Reply("@${it.user.username} "))
+                                    viewModel.updatePopupUIState(PopupUIState.Create("@${it.user.username} "))
                                     coroutineScope.launch { sheetState.show() }
                                 },
                                 onClickRenoteButton = {
-                                    viewModel.updateRespondUIState(RespondUIState.Renote(it))
+                                    viewModel.updatePopupUIState(PopupUIState.Renote(it))
                                     coroutineScope.launch { sheetState.show() }
                                 },
                                 onClickReactionButton = {
-                                    viewModel.updateRespondUIState(RespondUIState.Reaction(it))
+                                    viewModel.updatePopupUIState(PopupUIState.Reaction(it))
                                     coroutineScope.launch { sheetState.show() }
                                 },
                                 emojis = emojisState,
@@ -151,11 +152,11 @@ fun TimelineScreen(
         }
     }
 
-    uiState.respondUIState?.let { respondUIState ->
-        when (respondUIState) {
-            is RespondUIState.Reaction -> {
+    uiState.popupUIState?.let { popupUIState ->
+        when (popupUIState) {
+            is PopupUIState.Reaction -> {
                 ModalBottomSheet(onDismissRequest = {
-                    viewModel.updateRespondUIState(null)
+                    viewModel.updatePopupUIState(null)
                 }) {
                     EmojiSelectionGrid(
                         emojis = emojisState,
@@ -164,31 +165,41 @@ fun TimelineScreen(
                                 sheetState.hide()
                             }.invokeOnCompletion {
                                 if (!sheetState.isVisible) {
-                                    viewModel.updateRespondUIState(null)
+                                    viewModel.updatePopupUIState(null)
                                 }
                             }
-                            viewModel.createReaction(respondUIState.note, emoji)
+                            viewModel.createReaction(popupUIState.note, emoji)
                         }
                     )
                 }
             }
 
-            is RespondUIState.Renote -> {
+            is PopupUIState.Renote -> {
                 ModalBottomSheet(onDismissRequest = {
-                    viewModel.updateRespondUIState(null)
+                    viewModel.updatePopupUIState(null)
                 }) {
                     Column {
-                        Text(text = "转发")
-                        Text(text = "引用")
+                        Text(
+                            text = "转发",
+                            modifier = Modifier.clickable { viewModel.renote() }
+                        )
+                        Text(
+                            text = "引用",
+                            modifier = Modifier.clickable {
+                                viewModel.updatePopupUIState(
+                                    PopupUIState.Create("", renoteID = popupUIState.note.id)
+                                )
+                            }
+                        )
                     }
                 }
             }
 
-            is RespondUIState.Reply -> {
+            is PopupUIState.Create -> {
                 BoxWithConstraints {
                     Dialog(
                         onDismissRequest = {
-                            viewModel.updateRespondUIState(null)
+                            viewModel.updatePopupUIState(null)
                         },
                         properties = DialogProperties(
                             dismissOnBackPress = true,
@@ -198,9 +209,17 @@ fun TimelineScreen(
                     ) {
                         (LocalView.current.parent as DialogWindowProvider).window.setGravity(Gravity.TOP)
                         NoteEditor(
-                            text = respondUIState.text,
-                            onClickSubmit = { /*TODO*/ },
-                            onTextChange = { viewModel.updateRespondUIState(RespondUIState.Reply(it)) },
+                            text = popupUIState.text,
+                            onClickSubmit = { viewModel.createNote() },
+                            onTextChange = {
+                                viewModel.updatePopupUIState(
+                                    PopupUIState.Create(
+                                        it,
+                                        replyID = popupUIState.replyID,
+                                        renoteID = popupUIState.renoteID
+                                    )
+                                )
+                            },
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .heightIn(Dp.Hairline, maxHeight * 0.5f)

@@ -88,13 +88,34 @@ class TimelineViewModel @Inject constructor(
         }
     }
 
-    fun updateRespondUIState(respondUIState: RespondUIState?) {
-        _uiState.update { it.copy(respondUIState = respondUIState) }
+    fun updatePopupUIState(popupUIState: PopupUIState?) {
+        _uiState.update { it.copy(popupUIState = popupUIState) }
+    }
+
+    fun createNote() {
+        _uiState.value.popupUIState.apply {
+            if (this !is PopupUIState.Create) return
+            viewModelScope.launch(Dispatchers.IO) {
+                notesRepository.createNote(text = text, replyId = replyID, renoteId = renoteID)
+                    .map {
+                        updatePopupUIState(null)
+                    }
+            }
+        }
+    }
+
+    fun renote() {
+        _uiState.value.popupUIState.apply {
+            if (this !is PopupUIState.Renote) return
+            viewModelScope.launch(Dispatchers.IO) {
+                notesRepository.createNote(text = null, renoteId = note.id)
+            }
+        }
     }
 }
 
 data class NotesUIState(
-    val respondUIState: RespondUIState? = null,
+    val popupUIState: PopupUIState? = null,
     val loadingState: LoadingState = LoadingState.INIT,
     val errorMessage: String? = null,
 )
@@ -106,8 +127,10 @@ enum class Timeline {
     GLOBAL,
 }
 
-sealed class RespondUIState {
-    class Reply(val text: String) : RespondUIState()
-    class Renote(val note: Note) : RespondUIState()
-    class Reaction(val note: Note) : RespondUIState()
+sealed class PopupUIState {
+    class Create(val text: String, val replyID: String? = null, val renoteID: String? = null) :
+        PopupUIState()
+
+    class Renote(val note: Note) : PopupUIState()
+    class Reaction(val note: Note) : PopupUIState()
 }
