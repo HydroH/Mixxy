@@ -193,6 +193,7 @@ fun TimelineScreen(
                         properties = DialogProperties(
                             dismissOnBackPress = true,
                             dismissOnClickOutside = true,
+                            usePlatformDefaultWidth = false,
                         ),
                     ) {
                         (LocalView.current.parent as DialogWindowProvider).window.setGravity(Gravity.TOP)
@@ -203,6 +204,7 @@ fun TimelineScreen(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .heightIn(Dp.Hairline, maxHeight * 0.5f)
+                                .padding(20.dp)
                         )
                     }
                 }
