@@ -11,11 +11,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.ramcosta.composedestinations.DestinationsNavHost
 import dagger.hilt.android.AndroidEntryPoint
+import dev.hydroh.mixxy.data.remote.adapter.ContextualTokenSerializer
+import dev.hydroh.mixxy.data.remote.adapter.HostSelectionInterceptor
 import dev.hydroh.mixxy.ui.screen.NavGraphs
 import dev.hydroh.mixxy.ui.theme.MixxyTheme
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+    @Inject lateinit var hostSelectionInterceptor: HostSelectionInterceptor
+
+    @Inject lateinit var contextualTokenSerializer: ContextualTokenSerializer
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -24,8 +31,23 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-}
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        outState.apply {
+            putString("host", hostSelectionInterceptor.host)
+            putString("token", contextualTokenSerializer.token)
+        }
+        super.onSaveInstanceState(outState)
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+        savedInstanceState.apply {
+            hostSelectionInterceptor.host = getString("host")
+            contextualTokenSerializer.token = getString("token")
+        }
+    }
+}
 
 @Preview(showBackground = true)
 @Composable
