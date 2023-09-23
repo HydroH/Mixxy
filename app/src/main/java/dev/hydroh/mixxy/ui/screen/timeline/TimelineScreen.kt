@@ -181,15 +181,21 @@ fun TimelineScreen(
                     Column {
                         Text(
                             text = "转发",
-                            modifier = Modifier.clickable { viewModel.renote() }
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable { viewModel.renote() }
+                                .padding(8.dp, 6.dp)
                         )
                         Text(
                             text = "引用",
-                            modifier = Modifier.clickable {
-                                viewModel.updatePopupUIState(
-                                    PopupUIState.Create("", renoteID = popupUIState.note.id)
-                                )
-                            }
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable {
+                                    viewModel.updatePopupUIState(
+                                        PopupUIState.Create("", renoteID = popupUIState.note.id)
+                                    )
+                                }
+                                .padding(8.dp, 6.dp)
                         )
                     }
                 }

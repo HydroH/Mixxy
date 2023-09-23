@@ -56,13 +56,11 @@ fun NoteItem(
                 Spacer(modifier = Modifier.height(12.dp))
                 NoteItem(
                     note = note.renote,
-                    onCreateReaction = { _, reaction ->
-                        onCreateReaction(note.renote, reaction)
-                    },
-                    onDeleteReaction = { onDeleteReaction(note.renote) },
-                    onClickReplyButton = { onClickReplyButton(note.renote) },
-                    onClickRenoteButton = { onClickRenoteButton(note.renote) },
-                    onClickReactionButton = { onClickReactionButton(note.renote) },
+                    onCreateReaction = onCreateReaction,
+                    onDeleteReaction = onDeleteReaction,
+                    onClickReplyButton = onClickReplyButton,
+                    onClickRenoteButton = onClickRenoteButton,
+                    onClickReactionButton = onClickReactionButton,
                     emojis = emojis,
                 )
             }

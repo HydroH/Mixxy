@@ -109,6 +109,7 @@ class TimelineViewModel @Inject constructor(
             if (this !is PopupUIState.Renote) return
             viewModelScope.launch(Dispatchers.IO) {
                 notesRepository.createNote(text = null, renoteId = note.id)
+                updatePopupUIState(null)
             }
         }
     }
