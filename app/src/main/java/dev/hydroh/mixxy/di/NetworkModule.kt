@@ -36,7 +36,7 @@ class NetworkModule {
             .addInterceptor(hostSelectionInterceptor)
             .addInterceptor(
                 HttpLoggingInterceptor().apply {
-                    level = HttpLoggingInterceptor.Level.BASIC
+                    level = HttpLoggingInterceptor.Level.BODY
                 }
             )
             .build()
