@@ -3,17 +3,15 @@ package dev.hydroh.mixxy.ui.screen.timeline
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
+import arrow.core.Either
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.hydroh.mixxy.data.InstanceRepository
 import dev.hydroh.mixxy.data.NotesRepository
 import dev.hydroh.mixxy.data.remote.model.Note
 import dev.hydroh.mixxy.ui.enums.LoadingState
 import dev.hydroh.mixxy.util.cachedPager
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -50,12 +48,13 @@ class TimelineViewModel @Inject constructor(
         val title: String,
     )
 
-    fun createReaction(note: Note, reaction: String) {
+    suspend fun createReaction(note: Note, reaction: String): Either<Throwable, Unit> {
         if (note.myReaction != null) {
-            deleteReaction(note)
+            deleteReaction(note).onLeft {
+                return Either.Left(it)
+            }
         }
-        viewModelScope.launch(Dispatchers.IO) {
-            notesRepository.createReaction(note.id, reaction)
+        return notesRepository.createReaction(note.id, reaction).map {
             val newNote = note.copy(
                 myReaction = reaction,
                 reactions = note.reactions.toMutableMap().apply {
@@ -69,9 +68,8 @@ class TimelineViewModel @Inject constructor(
         }
     }
 
-    fun deleteReaction(note: Note) {
-        viewModelScope.launch(Dispatchers.IO) {
-            notesRepository.deleteReaction(note.id)
+    suspend fun deleteReaction(note: Note) =
+        notesRepository.deleteReaction(note.id).map {
             val oldReaction = note.myReaction
             val newNote = note.copy(
                 myReaction = null,
@@ -86,37 +84,15 @@ class TimelineViewModel @Inject constructor(
             hybridTimeline.update(newNote)
             globalTimeline.update(newNote)
         }
-    }
 
-    fun updatePopupUIState(popupUIState: PopupUIState?) {
-        _uiState.update { it.copy(popupUIState = popupUIState) }
-    }
+    suspend fun createNote(text: String, replyID: String?, renoteID: String?) =
+        notesRepository.createNote(text = text, replyId = replyID, renoteId = renoteID)
 
-    fun createNote() {
-        _uiState.value.popupUIState.apply {
-            if (this !is PopupUIState.Create) return
-            viewModelScope.launch(Dispatchers.IO) {
-                notesRepository.createNote(text = text, replyId = replyID, renoteId = renoteID)
-                    .map {
-                        updatePopupUIState(null)
-                    }
-            }
-        }
-    }
-
-    fun renote() {
-        _uiState.value.popupUIState.apply {
-            if (this !is PopupUIState.Renote) return
-            viewModelScope.launch(Dispatchers.IO) {
-                notesRepository.createNote(text = null, renoteId = note.id)
-                updatePopupUIState(null)
-            }
-        }
-    }
+    suspend fun renote(noteID: String) =
+        notesRepository.createNote(text = null, renoteId = noteID)
 }
 
 data class NotesUIState(
-    val popupUIState: PopupUIState? = null,
     val loadingState: LoadingState = LoadingState.INIT,
     val errorMessage: String? = null,
 )
@@ -126,12 +102,4 @@ enum class Timeline {
     LOCAL,
     HYBRID,
     GLOBAL,
-}
-
-sealed class PopupUIState {
-    class Create(val text: String, val replyID: String? = null, val renoteID: String? = null) :
-        PopupUIState()
-
-    class Renote(val note: Note) : PopupUIState()
-    class Reaction(val note: Note) : PopupUIState()
 }

@@ -1,15 +1,11 @@
 package dev.hydroh.mixxy.ui.screen.timeline
 
-import android.view.Gravity
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.pager.HorizontalPager
@@ -18,7 +14,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.TabRowDefaults
@@ -27,15 +22,11 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.platform.LocalView
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.DialogProperties
-import androidx.compose.ui.window.DialogWindowProvider
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -43,8 +34,9 @@ import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
-import dev.hydroh.mixxy.ui.components.EmojiSelectionGrid
-import dev.hydroh.mixxy.ui.components.NoteEditor
+import dev.hydroh.mixxy.ui.components.NoteAction
+import dev.hydroh.mixxy.ui.components.NoteActionDialog
+import dev.hydroh.mixxy.ui.components.NoteActionDialogState
 import dev.hydroh.mixxy.ui.components.NoteItem
 import dev.hydroh.mixxy.util.pagerTabIndicatorOffset
 import kotlinx.collections.immutable.persistentMapOf
@@ -66,6 +58,7 @@ fun TimelineScreen(
 
     val sheetState = rememberModalBottomSheetState()
     val pagerState = rememberPagerState { viewModel.tabs.count() }
+    val noteActionDialogState = remember { NoteActionDialogState() }
     val coroutineScope = rememberCoroutineScope()
 
     Column(modifier = Modifier.fillMaxWidth()) {
@@ -117,18 +110,26 @@ fun TimelineScreen(
                         pagingItems[index]?.let {
                             NoteItem(
                                 note = it,
-                                onCreateReaction = viewModel::createReaction,
-                                onDeleteReaction = viewModel::deleteReaction,
+                                onCreateReaction = { note, reaction ->
+                                    coroutineScope.launch {
+                                        viewModel.createReaction(note, reaction)
+                                    }
+                                },
+                                onDeleteReaction = { note ->
+                                    coroutineScope.launch {
+                                        viewModel.deleteReaction(note)
+                                    }
+                                },
                                 onClickReplyButton = {
-                                    viewModel.updatePopupUIState(PopupUIState.Create("@${it.user.username} "))
-                                    coroutineScope.launch { sheetState.show() }
+                                    noteActionDialogState.noteAction =
+                                        NoteAction.Create("@${it.user.username} ", replyID = it.id)
                                 },
                                 onClickRenoteButton = {
-                                    viewModel.updatePopupUIState(PopupUIState.Renote(it))
+                                    noteActionDialogState.noteAction = NoteAction.Renote(it)
                                     coroutineScope.launch { sheetState.show() }
                                 },
                                 onClickReactionButton = {
-                                    viewModel.updatePopupUIState(PopupUIState.Reaction(it))
+                                    noteActionDialogState.noteAction = NoteAction.Reaction(it)
                                     coroutineScope.launch { sheetState.show() }
                                 },
                                 emojis = emojisState,
@@ -152,88 +153,32 @@ fun TimelineScreen(
         }
     }
 
-    uiState.popupUIState?.let { popupUIState ->
-        when (popupUIState) {
-            is PopupUIState.Reaction -> {
-                ModalBottomSheet(onDismissRequest = {
-                    viewModel.updatePopupUIState(null)
-                }) {
-                    EmojiSelectionGrid(
-                        emojis = emojisState,
-                        onEmojiSelected = { emoji ->
-                            coroutineScope.launch {
-                                sheetState.hide()
-                            }.invokeOnCompletion {
-                                if (!sheetState.isVisible) {
-                                    viewModel.updatePopupUIState(null)
-                                }
-                            }
-                            viewModel.createReaction(popupUIState.note, emoji)
-                        }
-                    )
+    NoteActionDialog(
+        noteActionDialogState = noteActionDialogState,
+        sheetState = sheetState,
+        emojis = emojisState,
+        onCreateNote = { text, replyID, renoteID ->
+            coroutineScope.launch {
+                viewModel.createNote(text, replyID, renoteID).map {
+                    noteActionDialogState.noteAction = null
                 }
             }
-
-            is PopupUIState.Renote -> {
-                ModalBottomSheet(onDismissRequest = {
-                    viewModel.updatePopupUIState(null)
-                }) {
-                    Column {
-                        Text(
-                            text = "转发",
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clickable { viewModel.renote() }
-                                .padding(8.dp, 6.dp)
-                        )
-                        Text(
-                            text = "引用",
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clickable {
-                                    viewModel.updatePopupUIState(
-                                        PopupUIState.Create("", renoteID = popupUIState.note.id)
-                                    )
-                                }
-                                .padding(8.dp, 6.dp)
-                        )
-                    }
-                }
+        },
+        onRenote = { noteId ->
+            coroutineScope.launch { viewModel.renote(noteId) }
+            coroutineScope.launch {
+                sheetState.hide()
+            }.invokeOnCompletion {
+                if (!sheetState.isVisible) noteActionDialogState.noteAction = null
             }
-
-            is PopupUIState.Create -> {
-                BoxWithConstraints {
-                    Dialog(
-                        onDismissRequest = {
-                            viewModel.updatePopupUIState(null)
-                        },
-                        properties = DialogProperties(
-                            dismissOnBackPress = true,
-                            dismissOnClickOutside = true,
-                            usePlatformDefaultWidth = false,
-                        ),
-                    ) {
-                        (LocalView.current.parent as DialogWindowProvider).window.setGravity(Gravity.TOP)
-                        NoteEditor(
-                            text = popupUIState.text,
-                            onClickSubmit = { viewModel.createNote() },
-                            onTextChange = {
-                                viewModel.updatePopupUIState(
-                                    PopupUIState.Create(
-                                        it,
-                                        replyID = popupUIState.replyID,
-                                        renoteID = popupUIState.renoteID
-                                    )
-                                )
-                            },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .heightIn(Dp.Hairline, maxHeight * 0.5f)
-                                .padding(20.dp)
-                        )
-                    }
-                }
+        },
+        onReaction = { note, reaction ->
+            coroutineScope.launch { viewModel.createReaction(note, reaction) }
+            coroutineScope.launch {
+                sheetState.hide()
+            }.invokeOnCompletion {
+                if (!sheetState.isVisible) noteActionDialogState.noteAction = null
             }
         }
-    }
+    )
 }
