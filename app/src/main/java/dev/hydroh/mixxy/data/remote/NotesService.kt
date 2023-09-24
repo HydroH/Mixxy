@@ -44,9 +44,9 @@ interface NotesService {
     @POST("api/notes/featured")
     suspend fun featured(@Body body: NotesReq.Page): Either<Throwable, List<Note>>
 
-    @POST("api/reactions/create")
+    @POST("api/notes/reactions/create")
     suspend fun createReaction(@Body body: NotesReq.CreateReaction): Either<Throwable, Unit>
 
-    @POST("api/reactions/delete")
+    @POST("api/notes/reactions/delete")
     suspend fun deleteReaction(@Body body: NotesReq.DeleteReaction): Either<Throwable, Unit>
 }
