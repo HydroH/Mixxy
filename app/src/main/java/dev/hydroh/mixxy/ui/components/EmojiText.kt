@@ -79,7 +79,7 @@ fun LocalEmojiText(
                     AsyncImage(
                         model = emojis[emoji]!!.url,
                         contentDescription = null,
-                        contentScale = ContentScale.Fit,
+                        contentScale = ContentScale.FillHeight,
                         onSuccess = {
                             it.result.drawable.toBitmap().apply {
                                 aspectRatioMap[emoji] = width.toFloat() / height.toFloat()
