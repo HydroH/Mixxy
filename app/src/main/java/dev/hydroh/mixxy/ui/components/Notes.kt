@@ -2,7 +2,6 @@ package dev.hydroh.mixxy.ui.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -38,15 +37,14 @@ fun NoteItem(
     onClickReactionButton: (Note) -> Unit,
     emojis: ImmutableMap<String, EmojiData>,
     modifier: Modifier = Modifier,
+    simple: Boolean = false,
 ) {
-    Box(
+    Column(
         modifier = modifier,
     ) {
         if (note.text.isNullOrEmpty() && note.renote != null) {
             // Renote
-            Column(
-                modifier = Modifier.fillMaxWidth()
-            ) {
+            if (!simple) {
                 EmojiText(
                     text = "由 ${note.user.name ?: note.user.username} 转发",
                     emojis = emojis,
@@ -54,17 +52,33 @@ fun NoteItem(
                     fontSize = 14.sp,
                 )
                 Spacer(modifier = Modifier.height(12.dp))
+            }
+            NoteItem(
+                note = note.renote,
+                onCreateReaction = onCreateReaction,
+                onDeleteReaction = onDeleteReaction,
+                onClickReplyButton = onClickReplyButton,
+                onClickRenoteButton = onClickRenoteButton,
+                onClickReactionButton = onClickReactionButton,
+                emojis = emojis,
+                simple = false,
+            )
+        } else {
+            if (note.reply != null && !simple) {
+                // Reply
                 NoteItem(
-                    note = note.renote,
+                    note = note.reply,
                     onCreateReaction = onCreateReaction,
                     onDeleteReaction = onDeleteReaction,
                     onClickReplyButton = onClickReplyButton,
                     onClickRenoteButton = onClickRenoteButton,
                     onClickReactionButton = onClickReactionButton,
                     emojis = emojis,
+                    simple = true,
                 )
             }
-        } else {
+
+            // Note
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -120,6 +134,25 @@ fun NoteItem(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(vertical = 4.dp),
+                        )
+                    }
+
+                    if (simple) {
+                        return
+                    }
+
+                    // Quote
+                    if (note.renote != null) {
+                        Spacer(modifier = Modifier.height(4.dp))
+                        NoteItem(
+                            note = note.renote,
+                            onCreateReaction = onCreateReaction,
+                            onDeleteReaction = onDeleteReaction,
+                            onClickReplyButton = onClickReplyButton,
+                            onClickRenoteButton = onClickRenoteButton,
+                            onClickReactionButton = onClickReactionButton,
+                            emojis = emojis,
+                            simple = true,
                         )
                     }
 
