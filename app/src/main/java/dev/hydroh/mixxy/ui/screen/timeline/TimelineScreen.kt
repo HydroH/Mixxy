@@ -150,8 +150,14 @@ fun TimelineScreen(
                 LazyColumn(
                     modifier = Modifier
                         .fillMaxSize()
-                        .nestedScroll(scrollBehavior.nestedScrollConnection),
-                    state = lazyListState,
+                        .run {
+                            if (pagerState.currentPage == page) {
+                                nestedScroll(scrollBehavior.nestedScrollConnection)
+                            } else {
+                                this
+                            }
+                        },
+                    state = if (pagerState.currentPage == page) lazyListState else rememberLazyListState(),
                     contentPadding = PaddingValues(12.dp),
                 ) {
                     items(
