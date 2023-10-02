@@ -1,5 +1,8 @@
 package dev.hydroh.mixxy.ui.screen.timeline
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.PaddingValues
@@ -7,11 +10,16 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Tab
@@ -42,6 +50,7 @@ import dev.hydroh.mixxy.ui.components.NoteAction
 import dev.hydroh.mixxy.ui.components.NoteActionDialog
 import dev.hydroh.mixxy.ui.components.NoteActionDialogState
 import dev.hydroh.mixxy.ui.components.NoteItem
+import dev.hydroh.mixxy.util.isScrollingUp
 import dev.hydroh.mixxy.util.pagerTabIndicatorOffset
 import kotlinx.collections.immutable.persistentMapOf
 import kotlinx.coroutines.launch
@@ -63,6 +72,7 @@ fun TimelineScreen(
 
     val sheetState = rememberModalBottomSheetState()
     val pagerState = rememberPagerState { viewModel.tabs.count() }
+    val lazyListState = rememberLazyListState()
     val noteActionDialogState = remember { NoteActionDialogState() }
     val coroutineScope = rememberCoroutineScope()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(
@@ -72,6 +82,10 @@ fun TimelineScreen(
     Scaffold(
         topBar = {
             TopAppBar(
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.surface,
+                    scrolledContainerColor = MaterialTheme.colorScheme.surface,
+                ),
                 title = {
                     TabRow(
                         selectedTabIndex = pagerState.currentPage,
@@ -93,8 +107,21 @@ fun TimelineScreen(
                         }
                     }
                 },
-                scrollBehavior = scrollBehavior
+                scrollBehavior = scrollBehavior,
             )
+        },
+        floatingActionButton = {
+            AnimatedVisibility(
+                visible = lazyListState.isScrollingUp(),
+                enter = slideInVertically(initialOffsetY = { it * 2 }),
+                exit = slideOutVertically(targetOffsetY = { it * 2 }),
+            ) {
+                FloatingActionButton(onClick = {
+                    noteActionDialogState.noteAction = NoteAction.Create("")
+                }) {
+                    Icon(Icons.Default.Edit, contentDescription = null)
+                }
+            }
         }
     ) { innerPadding ->
         HorizontalPager(
@@ -124,6 +151,7 @@ fun TimelineScreen(
                     modifier = Modifier
                         .fillMaxSize()
                         .nestedScroll(scrollBehavior.nestedScrollConnection),
+                    state = lazyListState,
                     contentPadding = PaddingValues(12.dp),
                 ) {
                     items(
