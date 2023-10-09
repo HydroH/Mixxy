@@ -27,6 +27,7 @@ import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.origeek.imageViewer.previewer.ImagePreviewer
 import com.origeek.imageViewer.previewer.TransformImageView
+import com.origeek.imageViewer.previewer.VerticalDragType
 import com.origeek.imageViewer.previewer.rememberPreviewerState
 import dev.hydroh.mixxy.data.remote.model.DriveFile
 import kotlinx.coroutines.launch
@@ -40,7 +41,7 @@ fun ImageGrid(
     val gridId = remember { UUID.randomUUID().toString() }
     val previewerState =
         rememberPreviewerState(
-            enableVerticalDrag = true,
+            verticalDragType = VerticalDragType.UpAndDown,
             pageCount = { files.count() }
         ) { index ->
             gridId + index.toString()
@@ -63,27 +64,6 @@ fun ImageGrid(
                     modifier = Modifier
                         .clickable {
                             scope.launch { previewerState.openTransform(0) }
-                        }
-                        .clip(RoundedCornerShape(roundCorner))
-                )
-            }
-        }
-
-        2, 4 -> {
-            VerticalGrid(
-                columns = 2,
-                itemCount = files.count(),
-                spacing = contentPadding,
-                modifier = modifier.fillMaxSize(),
-                aspectRatio = if (files.count() == 2) 0.75f else 1.5f,
-            ) { index ->
-                TransformImageView(
-                    key = gridId + index.toString(),
-                    painter = rememberAsyncImagePainter(model = files[index].thumbnailUrl),
-                    previewerState = previewerState,
-                    modifier = Modifier
-                        .clickable {
-                            scope.launch { previewerState.openTransform(index) }
                         }
                         .clip(RoundedCornerShape(roundCorner))
                 )
@@ -156,7 +136,7 @@ fun ImageGrid(
 
         else -> {
             VerticalGrid(
-                columns = 3,
+                columns = 2,
                 itemCount = files.count(),
                 spacing = contentPadding,
                 modifier = modifier.fillMaxSize(),
@@ -198,6 +178,9 @@ fun ImageGrid(
                             .size(coil.size.Size.ORIGINAL)
                             .build()
                         rememberAsyncImagePainter(request)
+                    },
+                    detectGesture = {
+                        onTap = { scope.launch { previewerState.close() } }
                     },
                     modifier = Modifier.fillMaxSize()
                 )
