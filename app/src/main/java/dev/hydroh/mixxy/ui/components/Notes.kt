@@ -26,6 +26,7 @@ import dev.hydroh.mixxy.R
 import dev.hydroh.mixxy.data.local.model.EmojiData
 import dev.hydroh.mixxy.data.remote.model.Note
 import kotlinx.collections.immutable.ImmutableMap
+import kotlinx.collections.immutable.toImmutableList
 
 @Composable
 fun NoteItem(
@@ -37,14 +38,14 @@ fun NoteItem(
     onClickReactionButton: (Note) -> Unit,
     emojis: ImmutableMap<String, EmojiData>,
     modifier: Modifier = Modifier,
-    simple: Boolean = false,
+    isBrief: Boolean = false,
 ) {
     Column(
         modifier = modifier,
     ) {
         if (note.text.isNullOrEmpty() && note.renote != null) {
             // Renote
-            if (!simple) {
+            if (!isBrief) {
                 EmojiText(
                     text = "由 ${note.user.name ?: note.user.username} 转发",
                     emojis = emojis,
@@ -61,10 +62,10 @@ fun NoteItem(
                 onClickRenoteButton = onClickRenoteButton,
                 onClickReactionButton = onClickReactionButton,
                 emojis = emojis,
-                simple = false,
+                isBrief = false,
             )
         } else {
-            if (note.reply != null && !simple) {
+            if (note.reply != null && !isBrief) {
                 // Reply
                 NoteItem(
                     note = note.reply,
@@ -74,7 +75,7 @@ fun NoteItem(
                     onClickRenoteButton = onClickRenoteButton,
                     onClickReactionButton = onClickReactionButton,
                     emojis = emojis,
-                    simple = true,
+                    isBrief = true,
                 )
             }
 
@@ -130,14 +131,14 @@ fun NoteItem(
                     if (note.files.isNotEmpty()) {
                         Spacer(modifier = Modifier.height(2.dp))
                         ImageGrid(
-                            files = note.files,
+                            files = note.files.toImmutableList(),
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(vertical = 4.dp),
                         )
                     }
 
-                    if (simple) {
+                    if (isBrief) {
                         return
                     }
 
@@ -152,7 +153,7 @@ fun NoteItem(
                             onClickRenoteButton = onClickRenoteButton,
                             onClickReactionButton = onClickReactionButton,
                             emojis = emojis,
-                            simple = true,
+                            isBrief = true,
                         )
                     }
 

@@ -30,12 +30,13 @@ import com.origeek.imageViewer.previewer.TransformImageView
 import com.origeek.imageViewer.previewer.VerticalDragType
 import com.origeek.imageViewer.previewer.rememberPreviewerState
 import dev.hydroh.mixxy.data.remote.model.DriveFile
+import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.launch
 import java.util.UUID
 
 @Composable
 fun ImageGrid(
-    files: List<DriveFile>,
+    files: ImmutableList<DriveFile>,
     modifier: Modifier = Modifier,
 ) {
     val gridId = remember { UUID.randomUUID().toString() }
