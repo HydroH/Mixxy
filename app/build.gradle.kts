@@ -58,12 +58,12 @@ android {
 dependencies {
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
-    implementation("androidx.activity:activity-compose:1.7.2")
+    implementation("androidx.activity:activity-compose:1.8.0")
     implementation("androidx.datastore:datastore-preferences:1.0.0")
     implementation("androidx.browser:browser:1.6.0")
 
-    implementation("com.google.dagger:hilt-android:2.48")
-    ksp("com.google.dagger:hilt-compiler:2.48")
+    implementation("com.google.dagger:hilt-android:2.48.1")
+    ksp("com.google.dagger:hilt-compiler:2.48.1")
     implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
 
     implementation("androidx.room:room-runtime:2.5.2")
@@ -75,7 +75,7 @@ dependencies {
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
-    implementation("androidx.compose.material3:material3:1.2.0-alpha08")
+    implementation("androidx.compose.material3:material3:1.2.0-alpha09")
 
     implementation("androidx.paging:paging-runtime:3.2.1")
     implementation("androidx.paging:paging-compose:3.2.1")
@@ -90,14 +90,14 @@ dependencies {
 
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.1")
-    implementation("org.jetbrains.kotlinx:kotlinx-collections-immutable:0.3.5")
+    implementation("org.jetbrains.kotlinx:kotlinx-collections-immutable:0.3.6")
 
     implementation("io.arrow-kt:arrow-core:1.2.1")
     implementation("io.arrow-kt:arrow-fx-coroutines:1.2.1")
 
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:1.0.0")
-    implementation("com.github.skydoves:retrofit-adapters-arrow:1.0.8")
+    implementation("com.github.skydoves:retrofit-adapters-arrow:1.0.9")
     implementation("com.squareup.okhttp3:logging-interceptor:4.11.0")
 
     implementation("io.coil-kt:coil:2.4.0")
@@ -106,10 +106,10 @@ dependencies {
 
     implementation("com.google.accompanist:accompanist-swiperefresh:0.32.0")
     implementation("com.google.accompanist:accompanist-placeholder-material:0.32.0")
-    implementation("com.github.jvziyaoyao:ImageViewer:1.0.2-alpha.5")
+    implementation("com.github.jvziyaoyao:ImageViewer:1.0.2-alpha.6")
 
-    implementation("io.github.raamcosta.compose-destinations:core:1.9.53")
-    ksp("io.github.raamcosta.compose-destinations:ksp:1.9.53")
+    implementation("io.github.raamcosta.compose-destinations:core:1.9.54")
+    ksp("io.github.raamcosta.compose-destinations:ksp:1.9.54")
 
     detektPlugins("io.nlopez.compose.rules:detekt:0.3.0")
 }
