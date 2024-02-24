@@ -5,6 +5,7 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -28,22 +29,23 @@ import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.pulltorefresh.PullToRefreshContainer
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
-import com.google.accompanist.swiperefresh.SwipeRefresh
-import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import dev.hydroh.mixxy.ui.components.NoteAction
@@ -56,7 +58,6 @@ import kotlinx.collections.immutable.persistentMapOf
 import kotlinx.coroutines.launch
 
 // Use accompanist swiperefresh until it's added to material3
-@Suppress("DEPRECATION")
 @OptIn(
     ExperimentalFoundationApi::class,
     ExperimentalMaterial3Api::class
@@ -138,15 +139,19 @@ fun TimelineScreen(
             }
             val pagingItems = timeline.pager.collectAsLazyPagingItems()
 
-            SwipeRefresh(
-                state = rememberSwipeRefreshState(
-                    isRefreshing = pagingItems.loadState.refresh is LoadState.Loading
-                ),
-                onRefresh = {
+            val refreshState = rememberPullToRefreshState()
+            if (refreshState.isRefreshing) {
+                LaunchedEffect(true) {
                     pagingItems.refresh()
                     timeline.invalidate()
+                    refreshState.endRefresh()
                 }
-            ) {
+            }
+            Box(Modifier.nestedScroll(refreshState.nestedScrollConnection)) {
+                PullToRefreshContainer(
+                    modifier = Modifier.align(Alignment.TopCenter),
+                    state = refreshState,
+                )
                 LazyColumn(
                     modifier = Modifier
                         .fillMaxSize()
@@ -224,6 +229,7 @@ fun TimelineScreen(
                     }
                 }
             }
+
         }
     }
 
