@@ -9,42 +9,26 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.ramcosta.composedestinations.DestinationsNavHost
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
-import dev.hydroh.mixxy.data.remote.adapter.ContextualTokenSerializer
-import dev.hydroh.mixxy.data.remote.adapter.HostSelectionInterceptor
-import dev.hydroh.mixxy.ui.screen.NavGraphs
+import dev.hydroh.mixxy.ui.screen.login.LoginRoute
+import dev.hydroh.mixxy.ui.screen.login.LoginScreen
+import dev.hydroh.mixxy.ui.screen.splash.SplashRoute
+import dev.hydroh.mixxy.ui.screen.splash.SplashScreen
+import dev.hydroh.mixxy.ui.screen.timeline.TimelineRoute
+import dev.hydroh.mixxy.ui.screen.timeline.TimelineScreen
 import dev.hydroh.mixxy.ui.theme.MixxyTheme
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-    @Inject lateinit var hostSelectionInterceptor: HostSelectionInterceptor
-
-    @Inject lateinit var contextualTokenSerializer: ContextualTokenSerializer
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             MixxyTheme {
                 MixxyApp()
             }
-        }
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        outState.apply {
-            putString("host", hostSelectionInterceptor.host)
-            putString("token", contextualTokenSerializer.token)
-        }
-        super.onSaveInstanceState(outState)
-    }
-
-    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
-        super.onRestoreInstanceState(savedInstanceState)
-        savedInstanceState.apply {
-            hostSelectionInterceptor.host = getString("host")
-            contextualTokenSerializer.token = getString("token")
         }
     }
 }
@@ -56,6 +40,40 @@ fun MixxyApp() {
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.surfaceVariant
     ) {
-        DestinationsNavHost(navGraph = NavGraphs.root)
+        val navController = rememberNavController()
+        NavHost(navController = navController, startDestination = SplashRoute) {
+            composable<SplashRoute> {
+                SplashScreen(
+                    onNavigateToTimelineScreen = {
+                        navController.navigate(TimelineRoute) {
+                            popUpTo(SplashRoute) {
+                                inclusive = true
+                            }
+                        }
+                    },
+                    onNavigateToLoginScreen = {
+                        navController.navigate(LoginRoute) {
+                            popUpTo(SplashRoute) {
+                                inclusive = true
+                            }
+                        }
+                    }
+                )
+            }
+            composable<LoginRoute> {
+                LoginScreen(
+                    onNavigateToTimeline = {
+                        navController.navigate(TimelineRoute) {
+                            popUpTo(LoginRoute) {
+                                inclusive = true
+                            }
+                        }
+                    }
+                )
+            }
+            composable<TimelineRoute> {
+                TimelineScreen()
+            }
+        }
     }
 }

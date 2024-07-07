@@ -13,14 +13,6 @@ import javax.inject.Inject
 @HiltViewModel
 class SplashViewModel @Inject constructor(
     private val accountRepository: AccountRepository,
-    private val instanceRepository: InstanceRepository,
 ) : ViewModel() {
-    suspend fun loadAccount() = accountRepository.loadAccount()
-
-    @OptIn(DelicateCoroutinesApi::class)
-    fun fetchEmojis() {
-        GlobalScope.launch(Dispatchers.IO) {
-            instanceRepository.fetchEmojis()
-        }
-    }
+    suspend fun hasAccount() = accountRepository.hasAccount()
 }

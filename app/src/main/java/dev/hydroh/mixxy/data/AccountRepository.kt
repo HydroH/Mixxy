@@ -5,6 +5,7 @@ import dev.hydroh.mixxy.data.local.model.AccountInfo
 import dev.hydroh.mixxy.data.remote.AccountService
 import dev.hydroh.mixxy.data.remote.adapter.ContextualTokenSerializer
 import dev.hydroh.mixxy.data.remote.adapter.HostSelectionInterceptor
+import kotlinx.coroutines.flow.first
 import okhttp3.HttpUrl
 import java.util.UUID
 import javax.inject.Inject
@@ -12,8 +13,6 @@ import javax.inject.Singleton
 
 @Singleton
 class AccountRepository @Inject constructor(
-    private val hostSelectionInterceptor: HostSelectionInterceptor,
-    private val contextualTokenSerializer: ContextualTokenSerializer,
     private val accountService: AccountService,
     private val accountInfoDao: AccountInfoDao,
 ) {
@@ -22,10 +21,11 @@ class AccountRepository @Inject constructor(
 
     private var authUrl: String = ""
     private var sessionId: String = ""
+    private var host: String = ""
 
     fun newAuth(host: String): String {
-        sessionId = UUID.randomUUID().toString()
-        hostSelectionInterceptor.host = host
+        this.sessionId = UUID.randomUUID().toString()
+        this.host = host
         authUrl = HttpUrl.Builder()
             .scheme("https")
             .host(host)
@@ -41,12 +41,11 @@ class AccountRepository @Inject constructor(
         accountService.check(sessionId).fold(
             { false },
             { auth ->
-                contextualTokenSerializer.token = auth.token
                 accountInfoDao.insertAccountInfo(
                     AccountInfo(
                         username = auth.user.username,
                         active = true,
-                        host = hostSelectionInterceptor.host!!,
+                        host = host,
                         accessToken = auth.token,
                         name = auth.user.name,
                         avatarUrl = auth.user.avatarUrl,
@@ -56,12 +55,5 @@ class AccountRepository @Inject constructor(
             }
         )
 
-    suspend fun loadAccount(): Boolean {
-        val accountInfos = accountInfoDao.getActiveAccountInfo()
-        if (accountInfos.isEmpty()) return false
-        val accountInfo = accountInfos.first()
-        hostSelectionInterceptor.host = accountInfo.host
-        contextualTokenSerializer.token = accountInfo.accessToken
-        return true
-    }
+    suspend fun hasAccount(): Boolean = accountInfoDao.getActiveAccountInfo().first().isNotEmpty()
 }

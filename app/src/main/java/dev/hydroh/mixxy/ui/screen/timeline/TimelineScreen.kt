@@ -3,7 +3,6 @@ package dev.hydroh.mixxy.ui.screen.timeline
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -46,8 +45,6 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.compose.collectAsLazyPagingItems
-import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import dev.hydroh.mixxy.ui.components.NoteAction
 import dev.hydroh.mixxy.ui.components.NoteActionDialog
 import dev.hydroh.mixxy.ui.components.NoteActionDialogState
@@ -56,16 +53,16 @@ import dev.hydroh.mixxy.util.isScrollingUp
 import dev.hydroh.mixxy.util.pagerTabIndicatorOffset
 import kotlinx.collections.immutable.persistentMapOf
 import kotlinx.coroutines.launch
+import kotlinx.serialization.Serializable
 
-// Use accompanist swiperefresh until it's added to material3
+@Serializable
+object TimelineRoute
+
 @OptIn(
-    ExperimentalFoundationApi::class,
     ExperimentalMaterial3Api::class
 )
-@Destination
 @Composable
 fun TimelineScreen(
-    navigator: DestinationsNavigator? = null,
     viewModel: TimelineViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsState()

@@ -18,7 +18,6 @@ import javax.inject.Inject
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val accountRepository: AccountRepository,
-    private val instanceRepository: InstanceRepository,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(LoginUIState())
     val uiState = _uiState.asStateFlow()
@@ -52,13 +51,6 @@ class LoginViewModel @Inject constructor(
                     }
                 )
             }
-        }
-    }
-
-    @OptIn(DelicateCoroutinesApi::class)
-    fun fetchEmojis() {
-        GlobalScope.launch(Dispatchers.IO) {
-            instanceRepository.fetchEmojis()
         }
     }
 }

@@ -6,12 +6,18 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import dev.hydroh.mixxy.data.local.dao.AccountInfoDao
 import dev.hydroh.mixxy.data.remote.AccountService
 import dev.hydroh.mixxy.data.remote.InstanceService
 import dev.hydroh.mixxy.data.remote.NotesService
 import dev.hydroh.mixxy.data.remote.adapter.ContextualTokenSerializer
 import dev.hydroh.mixxy.data.remote.adapter.HostSelectionInterceptor
 import dev.hydroh.mixxy.data.remote.model.request.Token
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.SerializersModule
@@ -24,6 +30,33 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 @Module
 class NetworkModule {
+    @OptIn(DelicateCoroutinesApi::class)
+    @Provides
+    @Singleton
+    fun provideHostSelectionInterceptor(
+        accountInfoDao: AccountInfoDao,
+    ): HostSelectionInterceptor =
+        HostSelectionInterceptor().also { interceptor ->
+            GlobalScope.launch(Dispatchers.IO) {
+                accountInfoDao.getActiveAccountInfo().collect {
+                    it.firstOrNull()?.let { interceptor.host = it.host }
+                }
+            }
+        }
+
+    @OptIn(DelicateCoroutinesApi::class)
+    @Provides
+    @Singleton
+    fun provideContextualTokenSerializer(
+        accountInfoDao: AccountInfoDao,
+    ): ContextualTokenSerializer =
+        ContextualTokenSerializer().also { serializer ->
+            GlobalScope.launch(Dispatchers.IO) {
+                accountInfoDao.getActiveAccountInfo().collect {
+                    it.firstOrNull()?.let { serializer.token = it.accessToken }
+                }
+            }
+        }
 
     @OptIn(ExperimentalSerializationApi::class)
     @Provides

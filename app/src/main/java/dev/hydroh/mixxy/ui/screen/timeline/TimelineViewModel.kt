@@ -3,7 +3,7 @@ package dev.hydroh.mixxy.ui.screen.timeline
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
-import arrow.core.Either
+import arrow.core.raise.either
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.hydroh.mixxy.data.InstanceRepository
 import dev.hydroh.mixxy.data.NotesRepository
@@ -48,11 +48,9 @@ class TimelineViewModel @Inject constructor(
         val title: String,
     )
 
-    suspend fun createReaction(note: Note, reaction: String): Either<Throwable, Unit> {
+    suspend fun createReaction(note: Note, reaction: String) = either<Throwable, Unit> {
         if (note.myReaction != null) {
-            deleteReaction(note).onLeft {
-                return Either.Left(it)
-            }
+            deleteReaction(note).bind()
         }
         return notesRepository.createReaction(note.id, reaction).map {
             val newNote = note.copy(

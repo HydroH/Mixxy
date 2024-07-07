@@ -24,7 +24,7 @@ interface AccountInfoDao {
     fun getAccountInfos(): Flow<List<AccountInfo>>
 
     @Query("SELECT * FROM account_info WHERE active = 1")
-    suspend fun getActiveAccountInfo(): List<AccountInfo>
+    fun getActiveAccountInfo(): Flow<List<AccountInfo>>
 
     @Query("UPDATE account_info SET active = 0")
     suspend fun deactivateAccounts()

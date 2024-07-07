@@ -21,23 +21,21 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
-import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
-import com.ramcosta.composedestinations.navigation.popUpTo
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import dev.hydroh.mixxy.ui.enums.LoadingState
-import dev.hydroh.mixxy.ui.screen.destinations.LoginScreenDestination
-import dev.hydroh.mixxy.ui.screen.destinations.TimelineScreenDestination
+import kotlinx.serialization.Serializable
 
-@Destination
+@Serializable
+object LoginRoute
+
 @Composable
 fun LoginScreen(
-    navigator: DestinationsNavigator? = null,
     viewModel: LoginViewModel = hiltViewModel(),
+    onNavigateToTimeline: () -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -65,12 +63,7 @@ fun LoginScreen(
 
     LaunchedEffect(uiState.loadingState) {
         if (uiState.loadingState == LoadingState.SUCCESS) {
-            viewModel.fetchEmojis()
-            navigator?.navigate(TimelineScreenDestination) {
-                popUpTo(LoginScreenDestination) {
-                    inclusive = true
-                }
-            }
+            onNavigateToTimeline()
         }
     }
 
