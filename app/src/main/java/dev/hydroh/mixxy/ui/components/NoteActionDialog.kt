@@ -22,7 +22,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.window.DialogWindowProvider
-import dev.hydroh.mixxy.data.local.model.EmojiData
 import dev.hydroh.mixxy.data.remote.model.Note
 import kotlinx.collections.immutable.ImmutableMap
 

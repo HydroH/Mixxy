@@ -25,7 +25,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import dev.hydroh.mixxy.R
-import dev.hydroh.mixxy.data.local.model.EmojiData
 import kotlinx.collections.immutable.ImmutableMap
 
 @Composable

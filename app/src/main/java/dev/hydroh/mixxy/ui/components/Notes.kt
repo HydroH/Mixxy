@@ -23,7 +23,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import dev.hydroh.mixxy.R
-import dev.hydroh.mixxy.data.local.model.EmojiData
 import dev.hydroh.mixxy.data.remote.model.Note
 import kotlinx.collections.immutable.ImmutableMap
 import kotlinx.collections.immutable.toImmutableList

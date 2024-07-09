@@ -15,7 +15,6 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.em
 import androidx.core.graphics.drawable.toBitmap
 import coil.compose.AsyncImage
-import dev.hydroh.mixxy.data.local.model.EmojiData
 import dev.hydroh.mixxy.util.EmojiAnnotatedString
 import kotlinx.collections.immutable.ImmutableMap
 
