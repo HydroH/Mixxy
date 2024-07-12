@@ -4,11 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.hydroh.mixxy.data.AccountRepository
-import dev.hydroh.mixxy.data.InstanceRepository
-import dev.hydroh.mixxy.ui.enums.LoadingState
-import kotlinx.coroutines.DelicateCoroutinesApi
+import dev.hydroh.mixxy.ui.enum.LoadingState
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update

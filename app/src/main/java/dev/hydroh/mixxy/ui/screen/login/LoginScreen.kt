@@ -26,7 +26,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
-import dev.hydroh.mixxy.ui.enums.LoadingState
+import dev.hydroh.mixxy.ui.enum.LoadingState
 import kotlinx.serialization.Serializable
 
 @Serializable

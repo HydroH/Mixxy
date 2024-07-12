@@ -1,4 +1,4 @@
-package dev.hydroh.mixxy.ui.enums
+package dev.hydroh.mixxy.ui.enum
 
 enum class RespondType {
     COMMENT,

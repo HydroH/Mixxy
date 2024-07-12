@@ -8,7 +8,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.hydroh.mixxy.data.InstanceRepository
 import dev.hydroh.mixxy.data.NotesRepository
 import dev.hydroh.mixxy.data.remote.model.Note
-import dev.hydroh.mixxy.ui.enums.LoadingState
+import dev.hydroh.mixxy.ui.enum.LoadingState
 import dev.hydroh.mixxy.util.cachedPager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow

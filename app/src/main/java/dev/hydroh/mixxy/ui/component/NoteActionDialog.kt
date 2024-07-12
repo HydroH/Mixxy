@@ -1,4 +1,4 @@
-package dev.hydroh.mixxy.ui.components
+package dev.hydroh.mixxy.ui.component
 
 import android.view.Gravity
 import androidx.compose.foundation.clickable

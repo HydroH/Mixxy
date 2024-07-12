@@ -1,4 +1,4 @@
-package dev.hydroh.mixxy.ui.components
+package dev.hydroh.mixxy.ui.component
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.text.InlineTextContent

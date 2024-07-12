@@ -45,10 +45,10 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.compose.collectAsLazyPagingItems
-import dev.hydroh.mixxy.ui.components.NoteAction
-import dev.hydroh.mixxy.ui.components.NoteActionDialog
-import dev.hydroh.mixxy.ui.components.NoteActionDialogState
-import dev.hydroh.mixxy.ui.components.NoteItem
+import dev.hydroh.mixxy.ui.component.NoteAction
+import dev.hydroh.mixxy.ui.component.NoteActionDialog
+import dev.hydroh.mixxy.ui.component.NoteActionDialogState
+import dev.hydroh.mixxy.ui.component.NoteItem
 import dev.hydroh.mixxy.util.isScrollingUp
 import dev.hydroh.mixxy.util.pagerTabIndicatorOffset
 import kotlinx.collections.immutable.persistentMapOf

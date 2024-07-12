@@ -1,4 +1,4 @@
-package dev.hydroh.mixxy.ui.components
+package dev.hydroh.mixxy.ui.component
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
