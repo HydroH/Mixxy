@@ -50,6 +50,8 @@ dependencies {
     implementation(libs.markwon.inline.parser)
     implementation(libs.markwon.simple.ext)
 
+    implementation(libs.mfm.kt)
+
     implementation(libs.androidx.core.ktx)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui)

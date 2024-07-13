@@ -13,7 +13,6 @@ import io.noties.markwon.core.CorePlugin
 import io.noties.markwon.ext.strikethrough.StrikethroughPlugin
 import io.noties.markwon.ext.tables.TablePlugin
 import io.noties.markwon.image.coil.CoilImagesPlugin
-import io.noties.markwon.inlineparser.MarkwonInlineParserPlugin
 
 @Composable
 fun MfmText(
