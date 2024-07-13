@@ -1,3 +1,5 @@
+@file:Suppress("UnstableApiUsage")
+
 pluginManagement {
     repositories {
         google {
@@ -31,4 +33,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "Mixxy"
 include(":app")
-include(":mfm")
+include(":mfm-compose")

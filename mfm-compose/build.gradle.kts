@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace = "dev.hydroh.mfm"
+    namespace = "dev.hydroh.mixxy"
     compileSdk = 35
 
     defaultConfig {
