@@ -32,6 +32,7 @@ android {
     }
     kotlinOptions {
         jvmTarget = JavaVersion.VERSION_21.toString()
+        freeCompilerArgs = listOf("-Xcontext-receivers")
     }
     buildFeatures {
         compose = true
@@ -42,15 +43,9 @@ android {
 }
 
 dependencies {
-    implementation(libs.markwon.core)
-    implementation(libs.markwon.ext.strikethrough)
-    implementation(libs.markwon.ext.tables)
-    implementation(libs.markwon.ext.tasklist)
-    implementation(libs.markwon.image.coil)
-    implementation(libs.markwon.inline.parser)
-    implementation(libs.markwon.simple.ext)
-
     implementation(libs.mfm.kt)
+    implementation(libs.coil)
+    implementation(libs.coil.compose)
 
     implementation(libs.androidx.core.ktx)
     implementation(platform(libs.androidx.compose.bom))
