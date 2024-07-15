@@ -4,10 +4,15 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.RawQuery
 import androidx.room.Transaction
 import androidx.room.Update
+import androidx.sqlite.db.SimpleSQLiteQuery
+import androidx.sqlite.db.SupportSQLiteQuery
+import dev.hydroh.mixxy.data.local.model.Direction
 import dev.hydroh.mixxy.data.local.model.NoteJson
 import dev.hydroh.mixxy.data.local.model.NoteTimeline
+import dev.hydroh.mixxy.data.local.model.Paging
 import dev.hydroh.mixxy.data.local.model.Timeline
 
 @Dao
@@ -27,15 +32,24 @@ interface NoteDao {
         _insertNoteTimelines(noteJsons.map { NoteTimeline(it.id, timeline.value) })
     }
 
-    @Query("SELECT * FROM note_json " +
-            "LEFT JOIN note_timeline " +
-            "ON note_json.id = note_timeline.id " +
-            "WHERE note_timeline.timeline = :timeline " +
-            "ORDER BY note_json.created_at DESC " +
-            "LIMIT :limit " +
-            "OFFSET :offset")
-    suspend fun _getNotes(timeline: Int, limit: Int, offset: Int): List<NoteJson>
+    @RawQuery
+    suspend fun _getNotes(query: SupportSQLiteQuery): List<NoteJson>
 
-    suspend fun getNotes(timeline: Timeline, limit: Int, offset: Int) =
-        _getNotes(timeline.value, limit, offset)
+    suspend fun getNotes(timeline: Timeline, paging: Paging<Long>): List<NoteJson> {
+        var queryStr =
+            "SELECT * FROM note_json " +
+            "INNER JOIN note_timeline " +
+            "ON note_json.id = note_timeline.id " +
+            "WHERE note_timeline.timeline = ? " +
+            "ORDER BY note_json.created_at DESC "
+        val args = mutableListOf(timeline.value.toString())
+        paging.edge?.let {
+            queryStr += "AND note_json.created_at ${if (paging.direction == Direction.PREV) ">" else "<"} ? "
+            args.add(it.toString())
+        }
+        queryStr += "LIMIT ?"
+        args.add(paging.limit.toString())
+        val query = SimpleSQLiteQuery(queryStr, args.toTypedArray())
+        return _getNotes(query)
+    }
 }
