@@ -30,6 +30,10 @@ class DatabaseModule {
         appDatabase.accountInfoDao()
 
     @Provides
+    fun provideNoteDao(appDatabase: AppDatabase) =
+        appDatabase.noteDao()
+
+    @Provides
     @Singleton
     @UserDataStore
     fun provideUserDataStore(@ApplicationContext ctx: Context) =

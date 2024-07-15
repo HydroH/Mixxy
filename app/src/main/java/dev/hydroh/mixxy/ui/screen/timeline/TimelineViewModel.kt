@@ -22,7 +22,7 @@ class TimelineViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(NotesUIState())
     val uiState = _uiState.asStateFlow()
 
-    val emojis = instanceRepository.getEmojis()
+    val emojis = instanceRepository.emojis
 
     val homeTimeline = notesRepository.pagingFlow(Timeline.HOME)
         .cachedIn(viewModelScope).cachedPager()
@@ -47,6 +47,8 @@ class TimelineViewModel @Inject constructor(
         val timeline: Timeline,
         val title: String,
     )
+
+    suspend fun fetchEmojis() = instanceRepository.fetchEmojis()
 
     suspend fun createReaction(note: Note, reaction: String) = either<Throwable, Unit> {
         if (note.myReaction != null) {

@@ -45,6 +45,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.compose.collectAsLazyPagingItems
+import dev.hydroh.mixxy.data.remote.model.Emojis
 import dev.hydroh.mixxy.ui.component.NoteAction
 import dev.hydroh.mixxy.ui.component.NoteActionDialog
 import dev.hydroh.mixxy.ui.component.NoteActionDialogState
@@ -66,7 +67,7 @@ fun TimelineScreen(
     viewModel: TimelineViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    val emojisState by viewModel.emojis.collectAsState(persistentMapOf())
+    val emojisState by viewModel.emojis.collectAsState(Emojis(listOf()))
 
     val sheetState = rememberModalBottomSheetState()
     val pagerState = rememberPagerState { viewModel.tabs.count() }
@@ -76,6 +77,10 @@ fun TimelineScreen(
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(
         rememberTopAppBarState()
     )
+
+    LaunchedEffect(Unit) {
+        viewModel.fetchEmojis()
+    }
 
     Scaffold(
         topBar = {
