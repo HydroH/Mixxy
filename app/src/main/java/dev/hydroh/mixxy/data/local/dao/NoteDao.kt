@@ -13,18 +13,18 @@ import dev.hydroh.mixxy.data.local.model.Timeline
 @Dao
 interface NoteDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertNoteJsons(noteJsons: List<NoteJson>)
+    suspend fun _insertNoteJsons(noteJsons: List<NoteJson>)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertNoteTimelines(noteTimelines: List<NoteTimeline>)
+    suspend fun _insertNoteTimelines(noteTimelines: List<NoteTimeline>)
 
     @Update
     suspend fun updateNote(note: NoteJson)
 
     @Transaction
     suspend fun insertNotes(noteJsons: List<NoteJson>, timeline: Timeline) {
-        insertNoteJsons(noteJsons)
-        insertNoteTimelines(noteJsons.map { NoteTimeline(it.id, timeline.value) })
+        _insertNoteJsons(noteJsons)
+        _insertNoteTimelines(noteJsons.map { NoteTimeline(it.id, timeline.value) })
     }
 
     @Query("SELECT * FROM note_json " +
@@ -34,8 +34,8 @@ interface NoteDao {
             "ORDER BY note_json.created_at DESC " +
             "LIMIT :limit " +
             "OFFSET :offset")
-    suspend fun getNotes(timeline: Int, limit: Int, offset: Int): List<NoteJson>
+    suspend fun _getNotes(timeline: Int, limit: Int, offset: Int): List<NoteJson>
 
     suspend fun getNotes(timeline: Timeline, limit: Int, offset: Int) =
-        getNotes(timeline.value, limit, offset)
+        _getNotes(timeline.value, limit, offset)
 }

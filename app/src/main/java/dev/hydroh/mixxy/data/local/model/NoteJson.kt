@@ -2,13 +2,14 @@ package dev.hydroh.mixxy.data.local.model
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
+import androidx.room.PrimaryKey
 import dev.hydroh.mixxy.data.remote.model.Note
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
-@Entity(tableName = "note_json", primaryKeys = ["id"])
+@Entity(tableName = "note_json")
 data class NoteJson(
-    @ColumnInfo(name = "id") val id: String,
+    @PrimaryKey @ColumnInfo(name = "id") val id: String,
     @ColumnInfo(name="created_at") val createdAt: Long,
     @ColumnInfo(name = "json") val json: String,
 )
