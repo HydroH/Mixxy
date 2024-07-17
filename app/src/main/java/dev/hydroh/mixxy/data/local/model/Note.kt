@@ -10,7 +10,6 @@ import kotlinx.serialization.json.Json
 @Entity(tableName = "note_json")
 data class NoteJson(
     @PrimaryKey @ColumnInfo(name = "id") val id: String,
-    @ColumnInfo(name="created_at") val createdAt: Long,
     @ColumnInfo(name = "json") val json: String,
 )
 
@@ -28,4 +27,4 @@ enum class Timeline(val value: Int) {
 }
 
 fun NoteJson.toNote() =Json.decodeFromString<Note>(this.json)
-fun Note.toNoteJson() = NoteJson(this.id, this.createdAt.epochSeconds, Json.encodeToString(this))
+fun Note.toNoteJson() = NoteJson(this.id, Json.encodeToString(this))

@@ -7,7 +7,7 @@ import dev.hydroh.mixxy.data.remote.model.request.NotesReq
 import retrofit2.http.Body
 import retrofit2.http.POST
 
-interface NotesService {
+interface NoteService {
     @POST("api/notes")
     suspend fun list(@Body body: NotesReq.List): Either<Throwable, List<Note>>
 

@@ -9,11 +9,10 @@ import dagger.hilt.components.SingletonComponent
 import dev.hydroh.mixxy.data.local.dao.AccountInfoDao
 import dev.hydroh.mixxy.data.remote.AccountService
 import dev.hydroh.mixxy.data.remote.InstanceService
-import dev.hydroh.mixxy.data.remote.NotesService
+import dev.hydroh.mixxy.data.remote.NoteService
 import dev.hydroh.mixxy.data.remote.adapter.ContextualTokenSerializer
 import dev.hydroh.mixxy.data.remote.adapter.HostSelectionInterceptor
 import dev.hydroh.mixxy.data.remote.model.request.Token
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -98,6 +97,6 @@ class NetworkModule {
         retrofit.create(InstanceService::class.java)
 
     @Provides
-    fun provideNotesService(retrofit: Retrofit): NotesService =
-        retrofit.create(NotesService::class.java)
+    fun provideNotesService(retrofit: Retrofit): NoteService =
+        retrofit.create(NoteService::class.java)
 }
