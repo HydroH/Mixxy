@@ -59,5 +59,6 @@ class TimelineViewModel @Inject constructor(
 sealed class NotesUIState {
     object Init: NotesUIState()
     object Loading: NotesUIState()
+    object Finished: NotesUIState()
     data class Error(val message: String): NotesUIState()
 }

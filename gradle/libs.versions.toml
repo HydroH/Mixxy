@@ -1,10 +1,10 @@
 [versions]
-activityCompose = "1.9.0"
-agp = "8.5.1"
+activityCompose = "1.9.2"
+agp = "8.7.0-beta01"
 arrow = "1.2.4"
 browser = "1.8.0"
 coil = "2.6.0"
-composeBom = "2024.06.00"
+composeBom = "2024.09.00"
 coreKtx = "1.13.1"
 datastorePreferences = "1.1.1"
 detekt = "1.23.5"
@@ -20,16 +20,15 @@ kotlinxCollectionsImmutable = "0.3.7"
 kotlinxDatetime = "0.6.0"
 kotlinxSerializationJson = "1.7.1"
 ksp = "2.0.0-1.0.22"
-lifecycleRuntimeKtx = "2.8.3"
+lifecycleRuntimeKtx = "2.8.5"
 loggingInterceptor = "4.12.0"
 mfmKt = "0.0.2"
-navigationCompose = "2.8.0-beta04"
-paging = "3.3.0"
+navigationCompose = "2.8.0"
+paging = "3.3.2"
 retrofit = "2.11.0"
 retrofit2KotlinxSerializationConverter = "1.0.0"
 retrofitAdaptersArrow = "1.0.11"
 room = "2.6.1"
-markwon = "4.6.2"
 
 [libraries]
 androidx-browser = { module = "androidx.browser:browser", version.ref = "browser" }
@@ -73,13 +72,6 @@ mfm-kt = { module = "com.github.samunohito:mfm.kt", version.ref = "mfmKt" }
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 retrofit-adapters-arrow = { module = "com.github.skydoves:retrofit-adapters-arrow", version.ref = "retrofitAdaptersArrow" }
 retrofit2-kotlinx-serialization-converter = { module = "com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter", version.ref = "retrofit2KotlinxSerializationConverter" }
-markwon-core = { module = "io.noties.markwon:core", version.ref = "markwon" }
-markwon-ext-strikethrough = { module = "io.noties.markwon:ext-strikethrough", version.ref = "markwon" }
-markwon-ext-tables = { module = "io.noties.markwon:ext-tables", version.ref = "markwon" }
-markwon-ext-tasklist = { module = "io.noties.markwon:ext-tasklist", version.ref = "markwon" }
-markwon-image-coil = { module = "io.noties.markwon:image-coil", version.ref = "markwon" }
-markwon-inline-parser = { module = "io.noties.markwon:inline-parser", version.ref = "markwon" }
-markwon-simple-ext = { module = "io.noties.markwon:simple-ext", version.ref = "markwon" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
